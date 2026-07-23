@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <!-- ====================================================== -->
+    <!-- CONFIGURACIÓN -->
+    <!-- ====================================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        Sistema de Gestión Operativa
+
+    </title>
+
+    <!-- ====================================================== -->
+    <!-- FAVICON -->
+    <!-- ====================================================== -->
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="assets/img/logos/logo.png">
+
+    <!-- ====================================================== -->
+    <!-- BOOTSTRAP -->
+    <!-- ====================================================== -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- ====================================================== -->
+    <!-- FONT AWESOME -->
+    <!-- ====================================================== -->
+
+    <script
+        src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+        crossorigin="anonymous"></script>
+
+    <!-- ====================================================== -->
+    <!-- GOOGLE FONTS -->
+    <!-- ====================================================== -->
+
+    <link
+        href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+        rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700"
+        rel="stylesheet">
+
+    <!-- ====================================================== -->
+    <!-- ESTILOS -->
+    <!-- ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="assets/css/styles.css">
+
+    <link
+        rel="stylesheet"
+        href="assets/css/login.css">
+
+    <link
+        rel="stylesheet"
+        href="assets/css/dashboard.css">
+
+    <!-- ====================================================== -->
+    <!-- SUPABASE -->
+    <!-- ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- ====================================================== -->
+    <!-- JAVASCRIPT -->
+    <!-- ====================================================== -->
+<script defer src="assets/js/config.js"></script>
+<script defer src="assets/js/supabase.js"></script>
+<script defer src="assets/js/loading.js"></script>
+<script defer src="assets/js/auth.js"></script>
+<script defer src="assets/js/dashboard.js"></script>
+<script defer src="assets/js/usuarios.js"></script>
+<script defer src="assets/js/evidencias.js"></script>
+<!-- <script defer src="assets/js/pendientes.js"></script> -->
+<script defer src="assets/js/paneles.js"></script>
+<script defer src="assets/js/ia.js"></script>
+<script defer src="assets/js/navegacion.js"></script>
+<script defer src="assets/js/main.js"></script>
+
+</head>
+
+<body>
+
+    <!-- ====================================================== -->
+    <!-- PANTALLA DE CARGA -->
+    <!-- ====================================================== -->
+
+    <div id="loadingScreen">
+
+        <div class="loading-box">
+
+            <img
+                src="assets/img/logos/logo.png"
+                class="loading-logo"
+                id="loadingLogo"
+                alt="Logo">
+
+            <h1 class="loading-title">
+
+                Sistema de Gestión Operativa
+
+            </h1>
+
+            <p class="loading-subtitle">
+
+                Comisión Federal de Electricidad
+
+            </p>
+
+            <div class="loading-bar">
+
+                <div
+                    id="loadingProgress"
+                    class="loading-progress">
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- LOGIN -->
+    <!-- ====================================================== -->
+
+    <section
+        id="loginContainer"
+        class="login-container d-none">
+
+        <div class="background">
+
+            <div class="blur blur1"></div>
+
+            <div class="blur blur2"></div>
+
+        </div>
+
+        <div class="login-card">
+
+            <div class="logo-area">
+
+                <img
+                    src="assets/img/logos/logo.png"
+                    class="logo"
+                    alt="Logo">
+
+                <h1>
+
+                    Sistema de Gestión Operativa
+
+                </h1>
+
+                <span class="subtitulo">
+
+                    Comisión Federal de Electricidad
+
+                </span>
+
+                <p>
+
+                    Centro de Gestión Operativa
+
+                </p>
+
+            </div>
+
+            <form id="loginForm">
+
+                <div class="input-box">
+
+                    <label>
+
+                        Usuario
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="usuario"
+                        placeholder="Ingrese su usuario"
+                        autocomplete="username"
+                        required>
+
+                </div>
+
+                <div class="input-box">
+
+                    <label>
+
+                        Contraseña
+
+                    </label>
+
+                    <div class="password-box">
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Ingrese su contraseña"
+                            autocomplete="current-password"
+                            required>
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="toggle-password">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="extra-options">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="recordarme">
+
+                        Recordar sesión
+
+                    </label>
+
+                </div>
+
+                <button
+                    class="login-btn"
+                    type="submit">
+
+                    <i class="fa-solid fa-right-to-bracket"></i>
+
+                    Iniciar sesión
+
+                </button>
+
+                <div id="mensajeLogin"></div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <!-- ====================================================== -->
+    <!-- DASHBOARD -->
+    <!-- ====================================================== -->
+
+    <main
+        id="dashboardContainer"
+        class="dashboard d-none">
+
+        <!-- ====================================================== -->
+<!-- SIDEBAR -->
+<!-- ====================================================== -->
+
+<aside class="sidebar">
+
+    <div class="sidebar-logo">
+
+        <img
+            src="assets/img/logos/logo.png"
+            alt="Logo CFE">
+
+        <div>
+
+            <h2>Gestión Operativa</h2>
+
+            <small>Control • Eficiencia • Resultados</small>
+
+        </div>
+
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <a href="#" class="activo" id="menuInicio">
+
+            <i class="fa-solid fa-house"></i>
+
+            <span>Inicio</span>
+
+        </a>
+
+        <a href="#" id="menuPendientes">
+
+            <i class="fa-solid fa-list-check"></i>
+
+            <span>Pendientes</span>
+
+        </a>
+
+        <a href="#" id="menuEvidencias">
+
+            <i class="fa-solid fa-camera"></i>
+
+            <span>Evidencias</span>
+
+        </a>
+
+        <a href="#" id="menuReportes">
+
+            <i class="fa-solid fa-chart-column"></i>
+
+            <span>Reportes</span>
+
+        </a>
+
+        <a href="#" id="menuUsuarios">
+
+            <i class="fa-solid fa-users"></i>
+
+            <span>Usuarios</span>
+
+        </a>
+
+        <a href="#" id="menuBitacora">
+
+            <i class="fa-solid fa-book"></i>
+
+            <span>Bitácora</span>
+
+        </a>
+
+        <a href="#" id="menuIA">
+
+            <i class="fa-solid fa-robot"></i>
+
+            <span>Asistente IA</span>
+
+        </a>
+
+        <a href="#" id="menuConfiguracion">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>Configuración</span>
+
+        </a>
+
+    </nav>
+
+</aside>
+
+<!-- ====================================================== -->
+<!-- CONTENIDO -->
+<!-- ====================================================== -->
+
+<section class="contenido">
+
+    <!-- =============================================== -->
+    <!-- TOPBAR -->
+    <!-- =============================================== -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h2 id="saludo">
+
+                Bienvenido
+
+            </h2>
+
+          <p id="saludoRol">
+
+    Cargando información...
+
+</p>
+        </div>
+
+       <div class="usuario-box">
+
+<div class="usuario-info">
+
+    <span id="nombreUsuario">
+
+    </span>
+
+    <small id="rolUsuario">
+
+    </small>
+
+    <small id="estadoUsuario">
+
+        Sesión activa
+
+    </small>
+
+</div>
+
+
+    <button
+        id="btnCerrarSesion"
+        class="btn-cerrar-sesion">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Salir
+
+    </button>
+
+
+
+        </div>
+
+    </header>
+
+    <!-- =============================================== -->
+    <!-- DASHBOARD -->
+    <!-- =============================================== -->
+
+<section
+id="dashboardContent"
+class="contenido-dashboard">
+
+<section id="inicio" class="modulo">
+
+<!-- ================================================= -->
+<!-- BIENVENIDA -->
+<!-- ================================================= -->
+
+<div class="hero-dashboard">
+
+    <div class="hero-info dashboard-card">
+
+        <span class="hero-etiqueta">
+            PANEL PRINCIPAL • CFE
+        </span>
+
+        <h1>
+            BIENVENIDO A GESTIÓN OPERATIVA
+        </h1>
+
+        <p>
+            Administra pendientes, consulta indicadores en tiempo real,
+            revisa evidencias y monitorea la actividad del Centro de Gestión Operativa.
+        </p>
+
+        <div class="hero-actions">
+
+            <button
+                class="btn-dashboard"
+                id="btnIrPizarron">
+
+                <i class="fa-solid fa-table-columns"></i>
+                Ver Pizarrón
+
+            </button>
+
+            <button
+                class="btn-dashboard"
+                id="btnIrPendientes">
+
+                <i class="fa-solid fa-list-check"></i>
+                Ver Pendientes
+
+            </button>
+
+        </div>
+
+        <div class="hero-stats">
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-users"></i>
+                <div>
+                    <strong id="heroUsuariosActivos">0</strong>
+                    <span>Usuarios activos</span>
+                </div>
+            </div>
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-list-check"></i>
+                <div>
+                    <strong id="heroPendientesHero">0</strong>
+                    <span>Pendientes</span>
+                </div>
+            </div>
+
+            <div class="hero-stat">
+                <i class="fa-solid fa-bolt"></i>
+                <div>
+                    <strong>En línea</strong>
+                    <span>Sistema</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+   <div class="hero-resumen dashboard-card">
+
+    <h2>
+        <i class="fa-solid fa-chart-line"></i>
+        Resumen General
+    </h2>
+
+    <div class="resumen-item">
+        <span>📌 Pendientes activos</span>
+        <strong id="heroPendientes">0</strong>
+    </div>
+
+    <div class="resumen-item">
+        <span>✅ Finalizados</span>
+        <strong id="heroFinalizados">0</strong>
+    </div>
+
+    <div class="resumen-item">
+        <span>⚠️ Urgentes</span>
+        <strong id="heroUrgentes">0</strong>
+    </div>
+
+    <hr>
+
+    <div class="resumen-item">
+        <span>🟢 Sistema</span>
+        <strong>Funcionando</strong>
+    </div>
+
+    <div class="resumen-item">
+        <span>🔄 Última actualización</span>
+        <strong id="heroActualizacion">--:--</strong>
+    </div>
+
+    <div class="resumen-item">
+        <span>👤 Usuario actual</span>
+        <strong id="heroUsuario">-</strong>
+    </div>
+
+    <hr>
+
+    <p id="heroMensaje">
+        Hay 0 pendiente(s) activo(s)
+    </p>
+
+    <div class="hero-progress">
+        <div
+            id="heroBarra"
+            class="hero-progress-fill">
+        </div>
+    </div>
+
+    <small id="heroPorcentaje">
+        0% completado
+    </small>
+
+</div>
+
+</div>
+
+<!-- ================================================= -->
+<!-- EVIDENCIAS -->
+<!-- ================================================= -->
+
+</section>
+
+<section id="evidencias" class="modulo">
+
+<div class="dashboard-card">
+
+    <div class="section-title">
+
+        <h2>
+            <i class="fa-solid fa-camera"></i>
+            Evidencias de Campo
+        </h2>
+
+        <button class="btn-dashboard">
+            + Agregar evidencia
+        </button>
+
+    </div>
+
+
+    <div id="contenedorEvidencias"
+         class="grid-evidencias">
+
+
+        <div class="evidencia-vacia">
+
+            Sin evidencias registradas
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+</section>
+
+<section id="reportes" class="modulo">
+
+<!-- ================================================= -->
+<!-- INDICADORES -->
+<!-- ================================================= -->
+
+
+<div class="indicadores-grid">
+
+
+<div class="indicador-card">
+
+<i class="fa-solid fa-triangle-exclamation"></i>
+
+<div>
+
+<h3 id="totalAlertas">
+0
+</h3>
+
+<p>
+Alertas del sistema
+</p>
+
+</div>
+
+</div>
+
+
+
+<div class="indicador-card">
+
+<i class="fa-solid fa-list-check"></i>
+
+<div>
+
+<h3 id="totalPendientes">
+0
+</h3>
+
+<p>
+Pendientes activos
+</p>
+
+</div>
+
+</div>
+
+
+
+<div class="indicador-card">
+
+<i class="fa-solid fa-users"></i>
+
+<div>
+
+<h3 id="usuariosConectados">
+0
+</h3>
+
+<p>
+Usuarios activos
+</p>
+
+</div>
+
+</div>
+
+
+
+<div class="indicador-card">
+
+<i class="fa-solid fa-camera"></i>
+
+<div>
+
+<h3 id="totalEvidencias">
+0
+</h3>
+
+<p>
+Evidencias hoy
+</p>
+
+</div>
+
+</div>
+
+
+
+<div class="indicador-card">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<div>
+
+<h3 id="totalFinalizados">
+0
+</h3>
+
+<p>
+Tareas completadas
+</p>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+</section>
+
+<section id="bitacora" class="modulo">
+
+<!-- ================================================= -->
+<!-- ACTIVIDAD -->
+<!-- ================================================= -->
+
+
+<div class="dashboard-doble">
+
+
+<div class="dashboard-card">
+
+<h2>
+<i class="fa-solid fa-book"></i>
+Bitácora en vivo
+</h2>
+
+
+<div id="listaBitacora">
+
+Sin movimientos recientes
+
+</div>
+
+
+</div>
+
+
+
+<div class="dashboard-card">
+
+
+<h2>
+
+<i class="fa-solid fa-user-group"></i>
+
+Usuarios activos
+
+</h2>
+
+
+<div id="listaUsuariosActivos">
+
+    <div class="usuario-activo-card">
+
+        <img
+            src="assets/img/team/Elizabeth.jpg"
+            class="usuario-avatar"
+            alt="Usuario">
+
+        <div class="usuario-datos">
+
+            <h4>Elizabeth</h4>
+
+            <span class="estado desconectado">
+                <i class="fa-solid fa-circle"></i>
+                Desconectado
+            </span>
+
+            <small>
+                <i class="fa-solid fa-thumbtack"></i>
+                0 pendiente(s) activos
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="usuario-activo-card">
+
+        <img
+           src="assets/img/team/Jasso.jpg"
+            class="usuario-avatar"
+            alt="Usuario">
+
+        <div class="usuario-datos">
+
+            <h4>Jasso</h4>
+
+            <span class="estado desconectado">
+                <i class="fa-solid fa-circle"></i>
+                Desconectado
+            </span>
+
+            <small>
+                <i class="fa-solid fa-thumbtack"></i>
+                0 pendiente(s) activos
+            </small>
+
+        </div>
+
+    </div>
+
+    <div class="usuario-activo-card">
+
+        <img
+           src="assets/img/team/Enrique.jpg"
+            class="usuario-avatar"
+            alt="Usuario">
+
+        <div class="usuario-datos">
+
+            <h4>Enrique</h4>
+
+            <span class="estado desconectado">
+                <i class="fa-solid fa-circle"></i>
+                Desconectado
+            </span>
+
+            <small>
+                <i class="fa-solid fa-thumbtack"></i>
+                0 pendiente(s) activos
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+
+
+</section>
+
+<section id="tablero" class="modulo">
+
+<!-- ================================================= -->
+<!-- TABLERO ESTADOS -->
+<!-- ================================================= -->
+
+
+<div class="dashboard-card">
+
+
+<h2>
+
+<i class="fa-solid fa-table-columns"></i>
+
+Tablero de estados
+
+</h2>
+
+
+
+<div class="estado-grid">
+
+
+<div class="estado-col pendiente">
+
+<h3>
+📌 Pendiente
+</h3>
+
+
+<div id="estadoPendiente">
+
+</div>
+
+
+</div>
+
+
+
+<div class="estado-col proceso">
+
+<h3>
+🟡 En proceso
+</h3>
+
+
+<div id="estadoProceso">
+
+</div>
+
+
+</div>
+
+
+
+<div class="estado-col finalizado">
+
+<h3>
+✅ Finalizado
+</h3>
+
+
+<div id="estadoFinalizado">
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+</section>
+
+<section id="pendientes" class="modulo">
+
+    <!-- ================================================= -->
+    <!-- PENDIENTES POR USUARIO -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-card">
+
+        <h2>
+            <i class="fa-solid fa-list-check"></i>
+            Pendientes
+        </h2>
+
+        <p class="mb-4">
+            Selecciona el responsable para administrar sus pendientes.
+        </p>
+
+        <div
+            id="pendientesUsuarios"
+            class="usuarios-pendientes">
+
+        </div>
+
+    </div>
+
+</section>
+
+<section id="pizarron" class="modulo">
+
+<!-- ================================================= -->
+<!-- PIZARRON -->
+<!-- ================================================= -->
+
+
+<div class="dashboard-card">
+
+
+<div class="section-title">
+
+
+<h2>
+
+<i class="fa-solid fa-chalkboard"></i>
+
+Pizarrón de pendientes
+
+</h2>
+
+
+
+<button class="btn-dashboard">
+
+Analizar pendientes
+
+</button>
+
+
+</div>
+
+
+
+<input 
+class="buscador-dashboard"
+placeholder="Buscar pendiente o usuario...">
+
+
+
+<div id="pizarronPendientes">
+
+</div>
+
+
+</div>
+
+
+
+</section>
+
+<section id="ia" class="modulo">
+<h2>Asistente IA</h2>
+</section>
+
+<section id="configuracion" class="modulo">
+<h2>Configuración</h2>
+</section>
+
+</section>
+
+</main>
+
+<!-- ====================================================== -->
+<!-- BOOTSTRAP -->
+<!-- ====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

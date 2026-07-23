@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión Operativa | Iniciar Sesión</title>
+
+    <link rel="stylesheet" href="assets/css/login.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="assets/js/supabase.js" defer></script>
+    <script src="assets/js/auth.js" defer></script>
+
+</head>
+
+<body>
+
+    <div class="background">
+
+        <div class="blur blur1"></div>
+        <div class="blur blur2"></div>
+
+    </div>
+
+    <main class="login-container">
+
+        <section class="login-card">
+
+            <div class="logo-area">
+
+                <img
+                    src="assets/img/logos/logo.png"
+                    alt="Logo CFE"
+                    class="logo">
+
+                <h1>Gestión Operativa</h1>
+
+                <span class="subtitulo">
+                    Centro de Gestión Operativa
+                </span>
+
+                <p>
+                    Sistema Integral para el control de pendientes,
+                    evidencias y reportes.
+                </p>
+
+            </div>
+
+            <form id="loginForm">
+
+                <div class="input-box">
+
+                    <label for="usuario">
+                        Usuario
+                    </label>
+
+                    <input
+                        id="usuario"
+                        type="text"
+                        placeholder="Ingresa tu usuario"
+                        autocomplete="username"
+                        required>
+
+                </div>
+
+                <div class="input-box">
+
+                    <label for="password">
+                        Contraseña
+                    </label>
+
+                    <div class="password-box">
+
+                        <input
+                            id="password"
+                            type="password"
+                            placeholder="Ingresa tu contraseña"
+                            autocomplete="current-password"
+                            required>
+
+                        <button
+                            id="togglePassword"
+                            class="toggle-password"
+                            type="button">
+
+                            👁
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="extra-options">
+
+                    <label>
+
+                        <input
+                            type="checkbox"
+                            id="recordar">
+
+                        Recordar usuario
+
+                    </label>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="login-btn">
+
+                    Iniciar Sesión
+
+                </button>
+
+                <div id="mensaje"></div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>
