@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tablas y Gráficas | Sistema Gestión Operativa</title>
+
+    <link rel="icon" href="assets/img/logo.png">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/tablas.css">
+
+</head>
+
+<body>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <script src="assets/js/supabase.js"></script>
+
+    <script src="assets/js/tablas.js"></script>
+
+</body>
+
+<header class="barra-superior">
+
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+        <div class="d-flex align-items-center">
+
+            <img
+                src="assets/img/logo.png"
+                alt="Logo"
+                class="logo-tablas">
+
+            <div class="ms-3">
+
+                <h3 class="mb-0">
+                    Sistema Gestión Operativa
+                </h3>
+
+                <small id="usuarioActivo">
+                    Usuario
+                </small>
+
+            </div>
+
+        </div>
+
+        <button
+            class="btn btn-light"
+            onclick="location.href='index.html'">
+
+            <i class="fa-solid fa-house"></i>
+            Inicio
+
+        </button>
+
+    </div>
+
+</header>
+
+<div class="container-fluid py-4">
+
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">
+                <i class="fa-solid fa-chart-column"></i>
+                Tablas y Gráficas
+            </h2>
+
+            <p class="text-muted mb-0">
+                Centro de análisis de archivos Excel
+            </p>
+        </div>
+
+        <div>
+
+            <a href="index.html" class="btn btn-outline-secondary">
+
+                <i class="fa-solid fa-arrow-left"></i>
+                Regresar
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Tarjetas de estadísticas -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Archivos cargados</h6>
+                    <h2 id="statArchivos">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Hojas detectadas</h6>
+                    <h2 id="statHojas">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Registros</h6>
+                    <h2 id="statRegistros">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6>Promedio</h6>
+                    <h2 id="statPromedio">0</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Zona de carga -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-body text-center p-5">
+
+            <i class="fa-solid fa-file-excel fa-4x text-success mb-3"></i>
+
+            <h4>Cargar archivo Excel</h4>
+
+            <p class="text-muted">
+                Arrastra un archivo aquí o selecciónalo desde tu computadora.
+            </p>
+
+            <input
+                type="file"
+                id="excelInput"
+                class="form-control"
+                accept=".xlsx,.xls,.csv">
+
+        </div>
+
+    </div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <div class="row align-items-end">
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+
+                    Tipo de gráfica
+
+                </label>
+
+                <select
+                    id="tipoGrafica"
+                    class="form-select">
+
+                    <option value="bar">Barras</option>
+                    <option value="line">Líneas</option>
+                    <option value="pie">Pastel</option>
+                    <option value="doughnut">Dona</option>
+                    <option value="radar">Radar</option>
+                    <option value="polarArea">Área Polar</option>
+                    <option value="scatter">Dispersión</option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-6">
+
+                <button
+                    id="btnGenerarGrafica"
+                    class="btn btn-primary w-100">
+
+                    <i class="fa-solid fa-chart-column"></i>
+
+                    Generar gráfica
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+        <canvas id="graficaPrincipal" height="120"></canvas>
+
+    </div>
+
+</div>
+
+    <!-- Área de resultados -->
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <strong>
+                Resultados
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <div id="contenidoResultados">
+
+                <p class="text-center text-muted">
+
+                    Aún no se ha cargado ningún archivo.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</html>

@@ -1,0 +1,29 @@
+[1mdiff --git a/assets/js/pendientes-supabase.js b/assets/js/pendientes-supabase.js[m
+[1mindex e3e287f..d3aaefc 100644[m
+[1m--- a/assets/js/pendientes-supabase.js[m
+[1m+++ b/assets/js/pendientes-supabase.js[m
+[36m@@ -47,4 +47,23 @@[m [masync function guardarPendienteSupabase(nuevo) {[m
+     }[m
+ [m
+     return true;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32masync function cargarPendientesSupabase() {[m
+[32m+[m
+[32m+[m[32m    const { data, error } = await supabaseClient[m
+[32m+[m[32m        .from("pendientes")[m
+[32m+[m[32m        .select(`[m
+[32m+[m[32m            *,[m
+[32m+[m[32m            asignado:asignado_a(usuario,nombre),[m
+[32m+[m[32m            creador:creado_por(usuario,nombre)[m
+[32m+[m[32m        `)[m
+[32m+[m[32m        .order("folio", { ascending: true });[m
+[32m+[m
+[32m+[m[32m    if (error) {[m
+[32m+[m[32m        console.error("Error cargando pendientes:", error);[m
+[32m+[m[32m        return [];[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    return data;[m
+ }[m
+\ No newline at end of file[m

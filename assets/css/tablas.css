@@ -1,0 +1,108 @@
+/* ==========================================================
+   TABLAS Y GRÁFICAS V2
+========================================================== */
+
+body{
+    background:#f4f7fb;
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+}
+
+/* Encabezado */
+
+h2{
+    font-weight:700;
+    color:#1b3a57;
+}
+
+/* Tarjetas */
+
+.card{
+    border:none;
+    border-radius:18px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+}
+
+.card-body h6{
+    color:#6c757d;
+    font-size:.95rem;
+    margin-bottom:10px;
+}
+
+.card-body h2{
+    color:#0d6efd;
+    font-size:2rem;
+    font-weight:700;
+}
+
+/* Zona de carga */
+
+#excelInput{
+    margin-top:20px;
+}
+
+.fa-file-excel{
+    color:#198754;
+}
+
+/* Resultados */
+
+#contenidoResultados{
+    min-height:300px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#6c757d;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    h2{
+        font-size:1.5rem;
+    }
+
+    .card-body h2{
+        font-size:1.6rem;
+    }
+
+}
+
+/* ==========================================================
+   BARRA SUPERIOR
+========================================================== */
+
+.barra-superior{
+
+    background:#0d6efd;
+    color:white;
+    padding:16px 28px;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+
+}
+
+.logo-tablas{
+
+    width:60px;
+    height:60px;
+    object-fit:contain;
+
+}
+
+.barra-superior h3{
+
+    color:white;
+    margin:0;
+
+}
+
+#usuarioActivo{
+
+    color:rgba(255,255,255,.85);
+
+}

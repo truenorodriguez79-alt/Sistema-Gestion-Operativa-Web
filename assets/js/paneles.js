@@ -20,30 +20,30 @@ function crearPanelPendientes() {
     }
 
 
-  const responsables = [
+const responsables = [
 
 {
     usuario: "elizabeth",
     nombre: "Lic. Elizabeth Alvarez Hernandez",
-    descripcion: "Agendar pendientes",
-    imagen: "assets/img/fondo/apartado Elizabeth.jpg",
-    tablas: false
+    area: "Control Financiero",
+    clase: "tema-elizabeth",
+    imagen: "assets/img/fondo/apartado Elizabeth.jpg"
 },
 
 {
     usuario: "jaso",
     nombre: "Ing. Juan Carlos Rodriguez Jasso",
-    descripcion: "Agendar pendientes",
-    imagen: "assets/img/fondo/apartado Jasso.jpg",
-    tablas: true
+    area: "Asuntos Contenciosos",
+    clase: "tema-jaso",
+    imagen: "assets/img/fondo/apartado Jasso.jpg"
 },
 
 {
     usuario: "enrique",
     nombre: "Ing. Luis Enrique Arredondo Facio",
-    descripcion: "Agendar pendientes",
-    imagen: "assets/img/fondo/apartado Enrique .jpg",
-    tablas: true
+    area: "Gestión Operativa",
+    clase: "tema-enrique",
+    imagen: "assets/img/fondo/apartado Enrique .jpg"
 }
 
 ];
@@ -79,17 +79,24 @@ function crearPanelPendientes() {
 
 </button>
 
-                    ${usuario.tablas ? `
-                        <button class="btn-dashboard">
-                            <i class="fa-solid fa-table"></i>
-                            Tablas
-                        </button>
-                    ` : ""}
+                 <button
+    class="btn-dashboard"
+    onclick="window.location.href='tablas.html?usuario=${usuario.usuario}'">
 
-                    <button class="btn-dashboard">
-                        <i class="fa-solid fa-chart-pie"></i>
-                        Gráfica Pastel
-                    </button>
+    <i class="fa-solid fa-table"></i>
+    Tablas y Gráficas
+
+</button>
+
+                   <button
+    class="btn-dashboard"
+    onclick="window.location.href='grafica_pastel.html?usuario=${usuario.usuario}'">
+
+    <i class="fa-solid fa-chart-pie"></i>
+
+    Gráfica Pastel
+
+</button>
 
                 </div>
 
@@ -109,38 +116,58 @@ function crearPizarronPendientes() {
 
     const contenedor = document.getElementById("pizarronPendientes");
 
+    console.log("=== PIZARRÓN ===");
+console.log(contenedor);
+
     if (!contenedor) return;
 
- const responsables = [
+    const responsables = [
 
-{
-    usuario: "elizabeth",
-    nombre: "Lic. Elizabeth Alvarez Hernandez",
-    descripcion: "Agendar pendientes",
-    imagen: "assets/img/fondo/apartado Elizabeth.jpg",
-    tablas: false
-},
+        {
+            usuario: "elizabeth",
+            nombre: "Lic. Elizabeth Alvarez Hernandez",
+            area: "Control Financiero",
+            clase: "tema-elizabeth"
+        },
 
-{
-    usuario: "jaso",
-    nombre: "Ing. Juan Carlos Rodriguez Jasso",
-    descripcion: "Agendar pendientes",
-    imagen: "assets/img/fondo/apartado Jasso.jpg",
-    tablas: true
-},
+        {
+            usuario: "jaso",
+            nombre: "Ing. Juan Carlos Rodriguez Jasso",
+            area: "Asuntos Contenciosos",
+            clase: "tema-jaso"
+        },
 
-{
-    usuario: "enrique",
-    nombre: "Ing. Luis Enrique Arredondo Facio",
-    descripcion: "Agendar pendientes",
-    imagen: "assets/img/fondo/apartado Enrique .jpg",
-    tablas: true
-}
-];
+        {
+            usuario: "enrique",
+            nombre: "Ing. Luis Enrique Arredondo Facio",
+            area: "Gestión Operativa",
+            clase: "tema-enrique"
+        }
+
+    ];
+
+    const pendientes =
+        JSON.parse(localStorage.getItem("pendientes")) || [];
+
+        console.log("Pendientes:", pendientes);
 
     contenedor.innerHTML = "";
 
+console.log("Voy a crear las columnas");
+
     responsables.forEach(usuario => {
+
+        const listaUsuario = pendientes.filter(p => {
+
+            if (p.finalizado) return false;
+
+            return (
+                p.usuario === usuario.usuario ||
+                p.responsable === usuario.usuario ||
+                p.asignado === usuario.usuario
+            );
+
+        });
 
         contenedor.innerHTML += `
 
@@ -156,17 +183,34 @@ function crearPizarronPendientes() {
 
             <div class="estado-pizarron">
 
-                Orden normal
+                ${listaUsuario.length} pendiente(s)
 
             </div>
 
             <div class="lista-pizarron">
 
-                <div class="sin-pendientes">
+                ${
+                    listaUsuario.length
+                    ?
 
-                    Sin pendientes registrados
+                    listaUsuario.map(p => `
 
-                </div>
+                        <div class="item-pizarron">
+
+                            ${p.titulo || p.pendiente || p.descripcion}
+
+                        </div>
+
+                    `).join("")
+
+                    :
+
+                    `<div class="sin-pendientes">
+
+                        Sin pendientes registrados
+
+                    </div>`
+                }
 
             </div>
 

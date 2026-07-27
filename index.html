@@ -94,6 +94,8 @@
 <script defer src="assets/js/navegacion.js"></script>
 <script defer src="assets/js/main.js"></script>
 
+<link rel="stylesheet" href="assets/css/tema.css">
+
 </head>
 
 <body>
@@ -328,6 +330,9 @@
 
         </a>
 
+
+        
+
         <a href="#" id="menuUsuarios">
 
             <i class="fa-solid fa-users"></i>
@@ -376,6 +381,12 @@
 
     <header class="topbar">
 
+        <button id="btnMenuMovil" class="btn-menu-movil">
+
+        <i class="fa-solid fa-bars"></i>
+
+    </button>
+
         <div>
 
             <h2 id="saludo">
@@ -384,33 +395,44 @@
 
             </h2>
 
-          <p id="saludoRol">
+     <p id="saludoRol">
 
-    Cargando información...
+    Centro de Gestión Operativa • Sistema en línea 🟢
 
 </p>
         </div>
 
-       <div class="usuario-box">
+<div class="usuario-box">
 
-<div class="usuario-info">
+    <img
+        id="fotoUsuario"
+        class="usuario-avatar"
+        src="assets/img/usuarios/default.png"
+        alt="Foto del usuario">
 
-    <span id="nombreUsuario">
+    <div class="usuario-info">
 
-    </span>
+        <span id="nombreUsuario"></span>
 
-    <small id="rolUsuario">
+        <small id="rolUsuario"></small>
 
-    </small>
+        <small id="estadoUsuario">
+            Sesión activa
+        </small>
 
-    <small id="estadoUsuario">
-
-        Sesión activa
-
-    </small>
+    </div>
 
 </div>
 
+<button
+    id="btnTema"
+    class="btn-dashboard">
+
+    <i class="fa-solid fa-moon"></i>
+
+    Modo Oscuro
+
+</button>
 
     <button
         id="btnCerrarSesion"
@@ -423,6 +445,7 @@
     </button>
 
 
+    
 
         </div>
 
@@ -1039,6 +1062,8 @@ placeholder="Buscar pendiente o usuario...">
 <!-- ====================================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="assets/js/tema.js"></script>
 
 </body>
 

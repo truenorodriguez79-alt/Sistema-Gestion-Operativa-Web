@@ -1,0 +1,124 @@
+/* ==========================================================
+   SISTEMA GLOBAL DE TEMAS
+========================================================== */
+
+/* ---------- Variables ---------- */
+
+:root{
+
+    --bg:#f4f7fb;
+    --bg-secundario:#ffffff;
+
+    --texto:#1d2635;
+    --texto-secundario:#6b7280;
+
+    --borde:#d9dee8;
+
+    --primario:#0d6efd;
+    --exito:#198754;
+    --peligro:#dc3545;
+    --advertencia:#ffc107;
+
+    --sombra:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+/* ---------- Modo Oscuro ---------- */
+
+body.tema-oscuro{
+
+    --bg:#0f172a;
+    --bg-secundario:#1e293b;
+
+    --texto:#f8fafc;
+    --texto-secundario:#cbd5e1;
+
+    --borde:#334155;
+
+    --sombra:0 10px 25px rgba(0,0,0,.45);
+
+}
+
+/* ---------- Base ---------- */
+
+body{
+
+    background:var(--bg);
+    color:var(--texto);
+
+    transition:
+        background .30s,
+        color .30s;
+
+}
+
+/* ---------- Tarjetas ---------- */
+
+.card{
+
+    background:var(--bg-secundario);
+    color:var(--texto);
+
+    border:1px solid var(--borde);
+
+    box-shadow:var(--sombra);
+
+}
+
+/* ---------- Tablas ---------- */
+
+.table{
+
+    color:var(--texto);
+
+}
+
+.table th{
+
+    background:var(--primario);
+    color:white;
+
+}
+
+.table td{
+
+    background:var(--bg-secundario);
+
+}
+
+/* ---------- Formularios ---------- */
+
+.form-control,
+.form-select{
+
+    background:var(--bg-secundario);
+    color:var(--texto);
+
+    border:1px solid var(--borde);
+
+}
+
+.form-control:focus,
+.form-select:focus{
+
+    background:var(--bg-secundario);
+    color:var(--texto);
+
+}
+
+/* ---------- Encabezados ---------- */
+
+h1,h2,h3,h4,h5,h6{
+
+    color:var(--texto);
+
+}
+
+p,
+small,
+span,
+label{
+
+    color:var(--texto-secundario);
+
+}

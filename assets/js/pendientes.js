@@ -1,6 +1,5 @@
 
-let pendientes =
-JSON.parse(localStorage.getItem("pendientes")) || [];
+let pendientes = [];
 
 let bitacoraMini =
 JSON.parse(localStorage.getItem("bitacoraMini")) || [];
@@ -17,27 +16,39 @@ let actualizacionRemotaEnProceso = false;
 
 
 const datosUsuarios = {
+
+    admin:{
+        clase:"tema-admin",
+        fila:"fila-admin",
+        nombre:"Administrador",
+        area:"Centro de Gestión Operativa",
+        img:"assets/img/usuarios/Admin.avif"
+    },
+
     elizabeth:{
         clase:"tema-elizabeth",
         fila:"fila-elizabeth",
         nombre:"Lic. Elizabeth",
         area:"Control Financiero",
-        img:"assets/img/team/2.jpg"
+        img:"assets/img/usuarios/LIZ.jpg"
     },
+
     jasso:{
         clase:"tema-jaso",
         fila:"fila-jaso",
         nombre:"Lic. Jasso",
         area:"Asuntos Consultivos",
-        img:"assets/img/team/3.jpg"
+        img:"assets/img/usuarios/JASSO.jpg"
     },
+
     enrique:{
         clase:"tema-enrique",
         fila:"fila-enrique",
         nombre:"Lic. Enrique",
         area:"Asuntos Contenciosos",
-        img:"assets/img/team/1.jpg"
+        img:"assets/img/usuarios/ENRIQUE.jpg"
     }
+
 };
 
 ;
@@ -109,6 +120,8 @@ const sesion = JSON.parse(
     localStorage.getItem("usuarioSesion")
 );
 
+console.log("Sesión recibida:", sesion);
+
 if (!sesion) {
 
     window.location.href = "index.html";
@@ -139,6 +152,33 @@ console.log("sesion.nombre:", sesion.nombre);
         usuarioActivoInicial
     );
 
+    const datos = datosUsuarios[usuarioActivoInicial];
+
+console.log("Sesión:", sesion);
+console.log("Usuario:", usuarioActivoInicial);
+console.log("Datos encontrados:", datos);
+
+console.log(document.getElementById("fotoUsuarioSidebar"));
+console.log(document.getElementById("nombreUsuarioSidebar"));
+
+if (datos) {
+
+    const foto = document.getElementById("fotoUsuarioSidebar");
+    if (foto) foto.src = datos.img;
+
+    const nombre = document.getElementById("nombreUsuarioSidebar");
+    if (nombre) nombre.innerText = datos.nombre;
+
+    const nombreTop = document.getElementById("nombreUsuario");
+    if (nombreTop) nombreTop.innerText = datos.nombre;
+
+    const rolTop = document.getElementById("rolUsuario");
+    if (rolTop) rolTop.innerText = datos.area;
+
+    document.body.classList.add(datos.clase);
+
+}
+
 }
 
 function cambiarModo(){
@@ -158,14 +198,34 @@ function aplicarTemaUsuario(){
         "tema-enrique"
     );
 
-    let usuario = document.getElementById("usuario").value;
+   let usuario = obtenerUsuarioActivoSistema();
+
+console.log("Usuario detectado:", usuario);
+console.log("Datos:", datosUsuarios[usuario]);
 
     if(datosUsuarios[usuario]){
         document.body.classList.add(datosUsuarios[usuario].clase);
 
-        document.getElementById("perfilImg").src = datosUsuarios[usuario].img;
-        document.getElementById("perfilNombre").innerText = datosUsuarios[usuario].nombre;
-        document.getElementById("perfilArea").innerHTML = datosUsuarios[usuario].area + ' <span class="estado-usuario-activo">🟢 Activa</span>';
+       const foto = document.getElementById("fotoUsuarioSidebar");
+const nombre = document.getElementById("nombreUsuarioSidebar");
+
+if (foto) {
+    foto.src = datosUsuarios[usuario].img;
+}
+
+if (nombre) {
+    nombre.innerText = datosUsuarios[usuario].nombre;
+}
+
+const nombreTop = document.getElementById("nombreUsuario");
+if (nombreTop) {
+    nombreTop.innerText = datosUsuarios[usuario].nombre;
+}
+
+const rolTop = document.getElementById("rolUsuario");
+if (rolTop) {
+    rolTop.innerText = datosUsuarios[usuario].area;
+}
     }
 }
 
@@ -186,49 +246,15 @@ function abrirHora(){
 }
 
 function guardarPendientes(){
-    localStorage.setItem(
-        "pendientes",
-        JSON.stringify(pendientes)
-    );
 
     crearRespaldoAutomatico("Cambio guardado en pendientes");
+
 }
 
 /* ===========================
    SUPABASE
 =========================== */
 
-async function guardarPendienteSupabase(nuevo){
-
-    const { data: usuarioActual, error: errorUsuario } = await supabaseClient
-        .from("usuarios")
-        .select("id")
-        .eq("usuario", nuevo.usuario.toLowerCase())
-        .single();
-
-    if(errorUsuario){
-        console.error("No se encontró el usuario:", errorUsuario);
-        return;
-    }
-
-    const { data, error } = await supabaseClient
-        .from("pendientes")
-        .insert([{
-            titulo: nuevo.pendiente,
-            descripcion: "",
-            prioridad: nuevo.prioridad,
-            estado: nuevo.estado,
-            asignado_a: usuarioActual.id,
-            creado_por: usuarioActual.id
-        }]);
-
-    if(error){
-        console.error("Error al guardar pendiente:", error);
-    }else{
-        console.log("Pendiente guardado en Supabase");
-    }
-
-}
 
 
 function obtenerFechaCompletaMX(){
@@ -840,8 +866,7 @@ async function agregarPendiente(){
         obtenerUsuarioActivoSistema();
 
     let textoOriginal =
-        document.getElementById("pendiente").value.trim();
-
+document.getElementById("descripcionPendiente").value.trim();
     let fechaManual =
         document.getElementById("fecha").value;
 
@@ -908,9 +933,14 @@ if(creador === "jasso"){
         finalizado:false
     };
 
-    await guardarPendienteSupabase(nuevo);
+   const guardado = await guardarPendienteSupabase(nuevo);
 
-pendientes.push(nuevo);
+if (!guardado) {
+    alert("No se pudo guardar el pendiente en la base de datos.");
+    return;
+}
+
+pendientes = await cargarPendientesSupabase();
 
 guardarPendientes();
 
@@ -946,7 +976,7 @@ refrescarSistema();
         sonidoSuave();
     }, 100);
 
-    document.getElementById("pendiente").value = "";
+document.getElementById("descripcionPendiente").value = "";
     document.getElementById("fecha").value = "";
     document.getElementById("hora").value = "";
 }
@@ -1199,9 +1229,13 @@ function actualizarPaneles(){
         ? Math.round((completados / totalGeneral) * 100)
         : 0;
 
-    document.getElementById("statTotal").innerText = totalActivos;
-    document.getElementById("statUrgentes").innerText = urgentes;
-    document.getElementById("statCompletados").innerText = completados;
+        const statTotal = document.getElementById("statTotal");
+const statUrgentes = document.getElementById("statUrgentes");
+const statCompletados = document.getElementById("statCompletados");
+
+if (statTotal) statTotal.innerText = totalActivos;
+if (statUrgentes) statUrgentes.innerText = urgentes;
+if (statCompletados) statCompletados.innerText = completados;
 
     const barra =
         document.getElementById("barraCompletadosPendientes");
@@ -1222,7 +1256,13 @@ function actualizarPaneles(){
 }
 
 function actualizarVencimientos(lista){
+
     let contenedor = document.getElementById("listaVencimientos");
+
+    if (!contenedor) {
+        console.warn("No existe el contenedor listaVencimientos");
+        return;
+    }
 
     contenedor.innerHTML = "";
 
@@ -1409,26 +1449,41 @@ let ultimoFolio =
     sonidoSuave();
 }
 
-document.getElementById("usuario")
-.addEventListener("change", () => {
-    const usuarioElegido = document.getElementById("usuario").value;
+const selectorUsuario = document.getElementById("usuario");
 
-    if(usuarioElegido){
-        sessionStorage.setItem("usuarioSesionActual", usuarioElegido);
-        localStorage.setItem("usuarioRecordadoSistema", usuarioElegido);
-    }
+if (selectorUsuario) {
+
+    selectorUsuario.addEventListener("change", () => {
+
+        const usuarioElegido = selectorUsuario.value;
+
+        if (usuarioElegido) {
+            sessionStorage.setItem("usuarioSesionActual", usuarioElegido);
+            localStorage.setItem("usuarioRecordadoSistema", usuarioElegido);
+        }
+
+        aplicarTemaUsuario();
+        actualizarAyudaAsignacionJaso();
+        mostrarPendientes();
+
+    });
+
+}
+
+async function iniciarPendientes() {
+
+    pendientes = await cargarPendientesSupabase();
 
     aplicarTemaUsuario();
     actualizarAyudaAsignacionJaso();
     mostrarPendientes();
-});
+    actualizarPaneles();
+    renderizarBitacoraMini();
+    actualizarContadorNotificaciones();
 
-aplicarTemaUsuario();
-actualizarAyudaAsignacionJaso();
-mostrarPendientes();
-actualizarPaneles();
-renderizarBitacoraMini();
-actualizarContadorNotificaciones();
+}
+
+iniciarPendientes();
 
 /* ========================= */
 /* ACTUALIZACIÓN EN VIVO */
@@ -1740,7 +1795,7 @@ function rellenarCamposDesdeIA(){
         document.getElementById("preguntaIA");
 
     const pendienteInput =
-        document.getElementById("pendiente");
+    document.getElementById("descripcionPendiente");
 
     const fechaInput =
         document.getElementById("fecha");
@@ -1788,8 +1843,8 @@ function configurarEnterCamposPendientes(){
     const preguntaIA =
         document.getElementById("preguntaIA");
 
-    const pendiente =
-        document.getElementById("pendiente");
+const pendiente =
+    document.getElementById("descripcionPendiente");
 
     const fecha =
         document.getElementById("fecha");
