@@ -3,102 +3,111 @@
    Sistema de Gestión Operativa
 ========================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+/* ==========================================================
+   INICIO DEL DASHBOARD
+========================================================== */
+
+document.addEventListener("DOMContentLoaded", iniciarDashboard);
+
+async function iniciarDashboard() {
+
+    console.clear();
 
     console.log("======================================");
     console.log(" Sistema de Gestión Operativa");
     console.log(" Dashboard iniciado");
     console.log("======================================");
 
-    cargarResumenDashboard();
+    await cargarResumenDashboard();
 
-});
+}
 
 
 // ==========================================================
 // CARGAR DATOS DEL DASHBOARD
-// ==========================================================
 
+// ==========================================================
 async function cargarResumenDashboard() {
 
     try {
 
-        // Verificar que exista Supabase
         if (typeof supabaseClient === "undefined") {
-            console.error("Supabase no está inicializado.");
+
+            console.error("Supabase no inicializado.");
+
             return;
+
         }
 
-
-
-        // ============================
-        // USUARIOS
-        // ============================
-
-let activos = [];
+        /* ==========================================
+           USUARIOS
+        ========================================== */
 
         const {
-            data: usuarios,
+
+            data: usuarios = [],
+
             error: errorUsuarios
+
         } = await supabaseClient
+
             .from("usuarios")
+
             .select("*");
 
-        if (errorUsuarios) {
+        if (errorUsuarios) throw errorUsuarios;
 
-            console.error(errorUsuarios);
+        const activos = usuarios.filter(
 
-        } else {
+            usuario => usuario.habilitado === true
 
-activos = usuarios.filter(
-    usuario => usuario.habilitado === true
-);
+        );
 
-            const contadorUsuarios =
-                document.getElementById("usuariosConectados");
-
-            if (contadorUsuarios) {
-                contadorUsuarios.textContent = activos.length;
-            }
-
-        }
-
-
-        // ============================
-        // PENDIENTES
-        // ============================
+        /* ==========================================
+           PENDIENTES
+        ========================================== */
 
         const {
-            data: pendientes,
+
+            data: pendientes = [],
+
             error: errorPendientes
+
         } = await supabaseClient
+
             .from("pendientes")
+
             .select("*");
 
-        if (errorPendientes) {
+        if (errorPendientes) throw errorPendientes;
 
-            console.error(errorPendientes);
-            return;
-
-        }
+        /* ==========================================
+           ESTADÍSTICAS
+        ========================================== */
 
         const total = pendientes.filter(
-            p => p.estado !== "Finalizado"
-        ).length;
 
-        const urgentes = pendientes.filter(
-            p => p.prioridad === "Urgente"
+            p => p.estado !== "Finalizado"
+
         ).length;
 
         const finalizados = pendientes.filter(
+
             p => p.estado === "Finalizado"
+
         ).length;
 
-        // ============================
-        // ACTUALIZAR TARJETAS
-        // ============================
+        const urgentes = pendientes.filter(
 
- // HERO
+            p => p.prioridad === "Urgente"
+
+        ).length;
+
+/* ==========================================
+   ELEMENTOS DEL DASHBOARD
+========================================== */
+
+// HERO
 const heroPendientes =
     document.getElementById("heroPendientes");
 
@@ -110,9 +119,6 @@ const heroFinalizados =
 
 const heroUsuariosActivos =
     document.getElementById("heroUsuariosActivos");
-
-const heroPendientesHero =
-    document.getElementById("heroPendientesHero");
 
 const heroMensaje =
     document.getElementById("heroMensaje");
@@ -129,7 +135,7 @@ const heroBarra =
 const heroPorcentaje =
     document.getElementById("heroPorcentaje");
 
-// INDICADORES
+// TARJETAS
 const totalPendientes =
     document.getElementById("totalPendientes");
 
@@ -139,15 +145,74 @@ const totalUrgentes =
 const totalFinalizados =
     document.getElementById("totalFinalizados");
 
-if (heroPendientes)
+const usuariosConectados =
+    document.getElementById("usuariosConectados");
 
 
-       const porcentaje = 0;
+/* ==========================================
+   ACTUALIZAR INDICADORES
+========================================== */
+
+if (heroPendientes) {
+    heroPendientes.textContent = total;
+}
+
+if (heroUrgentes) {
+    heroUrgentes.textContent = urgentes;
+}
+
+if (heroFinalizados) {
+    heroFinalizados.textContent = finalizados;
+}
+
+if (heroUsuariosActivos) {
+    heroUsuariosActivos.textContent = activos.length;
+}
+
+if (totalPendientes) {
+    totalPendientes.textContent = total;
+}
+
+if (totalUrgentes) {
+    totalUrgentes.textContent = urgentes;
+}
+
+if (totalFinalizados) {
+    totalFinalizados.textContent = finalizados;
+}
+
+if (usuariosConectados) {
+    usuariosConectados.textContent = activos.length;
+}
+
+/* ==========================================
+   BARRA DE PROGRESO
+========================================== */
+
+const porcentaje =
+
+    (total + finalizados) > 0
+
+        ? Math.round((finalizados / (total + finalizados)) * 100)
+
+        : 0;
+
+if (heroBarra) {
+    heroBarra.style.width = porcentaje + "%";
+}
+
+if (heroPorcentaje) {
+    heroPorcentaje.textContent = porcentaje + "%";
+}
+
+/* ==========================================
+   INFORMACIÓN DEL SISTEMA
+========================================== */
 
 if (heroMensaje) {
 
     heroMensaje.textContent =
-        "Hay 0 pendiente(s) activo(s)";
+        `Hay ${total} pendiente(s) activo(s)`;
 
 }
 
@@ -161,27 +226,18 @@ if (heroActualizacion) {
 if (heroUsuario) {
 
     heroUsuario.textContent =
-        sessionStorage.getItem("usuarioSesionActual") || "Invitado";
+        sessionStorage.getItem("usuarioSesionActual") || "-";
 
 }
 
-if (heroBarra) {
-
-    heroBarra.style.width = porcentaje + "%";
-
-}
-
-if (heroPorcentaje) {
-
-    heroPorcentaje.textContent =
-        porcentaje + "% completado";
-
-}
+/* ==========================================
+   TABLERO
+========================================== */
 
 await actualizarTableroEstados();
 
 
-    } catch (error) {
+ } catch (error) {
 
         console.error(
             "Error cargando dashboard:",
@@ -191,6 +247,47 @@ await actualizarTableroEstados();
     }
 
 }
+
+/* ==========================================================
+   TABLERO DE ESTADOS
+========================================================== */
+
+console.log("Actualizando tablero de estados...");
+
+/* ==========================================
+   COLUMNAS
+========================================== */
+
+const columnaPendientes =
+    document.getElementById("tableroPendientes");
+
+const columnaProceso =
+    document.getElementById("tableroProceso");
+
+const columnaFinalizados =
+    document.getElementById("tableroFinalizados");
+
+if (!columnaPendientes ||
+    !columnaProceso ||
+    !columnaFinalizados) {
+
+    console.warn("No se encontraron las columnas del tablero.");
+
+    return;
+
+}
+
+/* ==========================================
+   LIMPIAR COLUMNAS
+========================================== */
+
+columnaPendientes.innerHTML = "";
+
+columnaProceso.innerHTML = "";
+
+columnaFinalizados.innerHTML = "";
+
+
 
 /* ==========================================================
    ACTUALIZAR HERO EN TIEMPO REAL

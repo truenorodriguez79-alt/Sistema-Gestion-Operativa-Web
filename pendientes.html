@@ -228,30 +228,13 @@
 
 <!-- Asignar a -->
 
-<label>Asignar a</label>
 
 <div class="usuarios-asignacion">
 
-    <button
-        type="button"
-        class="btn-asignar"
-        data-usuario="jasso">
-        Jasso
-    </button>
+   
 
-    <button
-        type="button"
-        class="btn-asignar"
-        data-usuario="elizabeth">
-        Elizabeth
-    </button>
 
-    <button
-        type="button"
-        class="btn-asignar"
-        data-usuario="enrique">
-        Enrique
-    </button>
+    
 
 </div>
 
@@ -260,22 +243,25 @@
     id="asignadoA">
 
 
-        <!-- Fecha -->
+       
 
-        <label>Fecha límite (Opcional)</label>
+            <label>Prioridad</label>
 
-        <input
-            type="date"
-            id="fechaLimite">
+<select id="prioridad">
 
-        <!-- Hora -->
+    <option value="Media" selected>
+        🟡 Media
+    </option>
 
-        <label>Hora (Opcional)</label>
+    <option value="Alta">
+        🟠 Alta
+    </option>
 
-        <input
-            type="time"
-            id="horaLimite">
+    <option value="Urgente">
+        🔴 Urgente
+    </option>
 
+</select>
         <!-- Dictado -->
 
         <button
@@ -393,79 +379,9 @@
     <!-- RESUMEN GENERAL -->
     <!-- ===================================== -->
 
-    <section class="card-resumen">
-
-        <h2>
-
-            <i class="fa-solid fa-chart-pie"></i>
-
-            Resumen General
-
-        </h2>
-
-        <div class="item-resumen">
-
-            <span>Total de Pendientes</span>
-
-            <strong id="resumenPendientes">0</strong>
-
-        </div>
-
-        <div class="item-resumen">
-
-            <span>En Proceso</span>
-
-            <strong id="resumenProceso">0</strong>
-
-        </div>
-
-        <div class="item-resumen">
-
-            <span>Finalizados</span>
-
-            <strong id="resumenFinalizados">0</strong>
-
-        </div>
-
-        <div class="item-resumen">
-
-            <span>Urgentes</span>
-
-            <strong id="resumenUrgentes">0</strong>
-
-        </div>
-
-    </section>
-
-
-
     <!-- ===================================== -->
     <!-- ACTIVIDAD RECIENTE -->
     <!-- ===================================== -->
-
-    <section class="card-actividad">
-
-        <h2>
-
-            <i class="fa-solid fa-clock-rotate-left"></i>
-
-            Actividad Reciente
-
-        </h2>
-
-        <div
-            id="actividadReciente"
-            class="lista-actividad">
-
-            <p>
-                No hay movimientos registrados.
-            </p>
-
-        </div>
-
-    </section>
-
-
 
     <!-- ===================================== -->
     <!-- INFORMACIÓN -->
@@ -529,6 +445,8 @@
 <script src="assets/js/pendientes.js"></script>
 
 <script src="assets/js/evidencias.js"></script>
+
+<script src="assets/js/tema.js"></script>
 
 
 </body>

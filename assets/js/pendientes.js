@@ -25,8 +25,9 @@ const formulario = document.getElementById("formPendiente");
 const txtTitulo = document.getElementById("titulo");
 const txtDescripcion = document.getElementById("descripcion");
 
-const txtFecha = document.getElementById("fechaLimite");
-const txtHora = document.getElementById("horaLimite");
+
+
+const cmbPrioridad = document.getElementById("prioridad");
 
 const btnVoz = document.getElementById("btnVoz");
 
@@ -121,11 +122,33 @@ function registrarEventos() {
    FOLIOS
 ========================================================== */
 
-function generarFolio() {
+async function generarFolio() {
 
-    ultimoFolio++;
+    const { data, error } = await supabaseClient
 
-    return ultimoFolio;
+        .from("pendientes")
+
+        .select("folio")
+
+        .order("folio", { ascending: false })
+
+        .limit(1)
+
+        .maybeSingle();
+
+    if (error) {
+
+        console.error(error);
+
+        return 1;
+
+    }
+
+    return data
+
+        ? Number(data.folio) + 1
+
+        : 1;
 
 }
 
@@ -267,33 +290,27 @@ async function guardarPendienteSupabase(pendiente){
 
     }
 
+    if (typeof actualizarPaneles === "function") {
+
+        await actualizarPaneles();
+
+    }
+
+    if (typeof cargarResumenDashboard === "function") {
+
+        await cargarResumenDashboard();
+
+    }
+
+    if (typeof cargarBitacora === "function") {
+
+        await cargarBitacora();
+
+    }
+
     return data;
 
 }
-
-// ==========================================
-// SINCRONIZAR MÓDULOS
-// ==========================================
-
-if (typeof actualizarPaneles === "function") {
-
-    await actualizarPaneles();
-
-}
-
-if (typeof cargarResumenDashboard === "function") {
-
-    await cargarResumenDashboard();
-
-}
-
-if (typeof cargarBitacora === "function") {
-
-    await cargarBitacora();
-
-}
-
-return data;
 
 /* ==========================================================
    HISTORIAL
@@ -425,8 +442,9 @@ function actualizarTabla() {
 
     cuerpoTabla.innerHTML = "";
 
-    pendientes.forEach((pendiente) => {
-
+pendientes
+    .filter(p => p.estado !== "Finalizado")
+    .forEach((pendiente) => {
         const fila = document.createElement("tr");
 
         fila.innerHTML = `
@@ -471,59 +489,58 @@ function actualizarTabla() {
 /* ==========================================================
    ESTADÍSTICAS
 ========================================================== */
-
 function actualizarEstadisticas() {
 
-    const total = pendientes.length;
+    const activos = pendientes.filter(
+        p => p.estado === "Pendiente"
+    ).length;
 
     const proceso = pendientes.filter(
-
         p => p.estado === "En Proceso"
-
     ).length;
 
     const finalizados = pendientes.filter(
-
         p => p.estado === "Finalizado"
-
     ).length;
 
     const urgentes = pendientes.filter(
-
-        p => p.prioridad === "Urgente"
-
+        p =>
+            p.prioridad === "Urgente" &&
+            p.estado !== "Finalizado"
     ).length;
 
-    if (totalPendientes) totalPendientes.textContent = total;
+    if (totalPendientes)
+        totalPendientes.textContent = activos;
 
-    if (totalProceso) totalProceso.textContent = proceso;
+    if (totalProceso)
+        totalProceso.textContent = proceso;
 
-    if (totalFinalizados) totalFinalizados.textContent = finalizados;
+    if (totalFinalizados)
+        totalFinalizados.textContent = finalizados;
 
-    if (totalUrgentes) totalUrgentes.textContent = urgentes;
+    if (totalUrgentes)
+        totalUrgentes.textContent = urgentes;
+
+    const totalGeneral =
+        activos + proceso + finalizados;
 
     const porcentaje =
-
-        total === 0
-
+        totalGeneral === 0
             ? 0
+            : Math.round(
+                (finalizados * 100) /
+                totalGeneral
+            );
 
-            : Math.round((finalizados * 100) / total);
+    if (porcentajeProgreso)
+        porcentajeProgreso.textContent =
+            porcentaje + "%";
 
-    if (porcentajeProgreso) {
-
-        porcentajeProgreso.textContent = porcentaje + "%";
-
-    }
-
-    if (barraProgreso) {
-
-        barraProgreso.style.width = porcentaje + "%";
-
-    }
+    if (barraProgreso)
+        barraProgreso.style.width =
+            porcentaje + "%";
 
 }
-
 /* ==========================================================
    KANBAN
 ========================================================== */
@@ -538,8 +555,9 @@ function actualizarKanban() {
 
     kanbanFinalizados.innerHTML = "";
 
-    pendientes.forEach(crearTarjetaKanban);
-
+pendientes
+    .filter(p => p.estado !== "Finalizado")
+    .forEach(crearTarjetaKanban);
 }
 
 function crearTarjetaKanban(pendiente) {
@@ -699,107 +717,100 @@ async function crearPendiente() {
     const titulo = txtTitulo.value.trim();
 
     if (!titulo) {
-
         alert("Debes escribir un título.");
-
+        txtTitulo.focus();
         return;
-
     }
-const usuarioSesion =
-    sessionStorage.getItem("usuarioSesionActual");
 
-const responsable =
-    inputAsignado.value || usuarioSesion;
+ const usuario = sessionStorage.getItem("usuarioSesionActual");
 
-const datos = {
+let responsable = usuario;
 
-    titulo,
+let tituloFinal = titulo;
 
-    descripcion: txtDescripcion.value.trim(),
+/* ============================================
+   SOLO JASSO Y AUGUSTO PUEDEN ASIGNAR
+============================================ */
 
-    creado_por: usuarioSesion,
+if (usuario === "jasso" || usuario === "augusto") {
 
-    asignado_a: responsable,
+    const usuarios = {
+        elizabeth: "elizabeth",
+        enrique: "enrique",
+        jasso: "jasso"
+    };
 
-    prioridad: "Media",
+    const palabras = titulo.trim().split(" ");
 
-    estado: "Pendiente",
+    const ultimaPalabra = palabras.pop().toLowerCase();
 
-fecha_limite: txtFecha.value || null
+    if (usuarios[ultimaPalabra]) {
 
-};
+        responsable = usuarios[ultimaPalabra];
 
-    if (pendienteEditando) {
-
- const { data, error } = await supabaseClient
-    .from("pendientes")
-    .delete()
-    .eq("id", id)
-    .select();
-
-console.log("Filas eliminadas:", data);
-console.log("Error:", error);
-
-        if (error) {
-
-            console.error(error);
-
-            return;
-
-        }
-
-        registrarMovimiento(
-
-            "Pendiente actualizado",
-
-            datos.titulo
-
-        );
-
-        pendienteEditando = null;
+        tituloFinal = palabras.join(" ");
 
     } else {
 
-datos.folio = generarFolio();
+        palabras.push(ultimaPalabra);
 
-datos.estado = "Pendiente";
-
-const pendienteCreado =
-    await guardarPendienteSupabase(datos);
-
-if (!pendienteCreado) return;
-
-// Actualizar el siguiente folio desde Supabase
-await cargarUltimoFolioSupabase();
-
-        registrarMovimiento(
-
-            "Pendiente creado",
-
-            datos.titulo
-
-        );
-
-await registrarHistorial(
-    pendienteCreado.id,
-    "CREAR",
-    `Se creó el pendiente ${pendienteCreado.folio}`
-);
+        tituloFinal = palabras.join(" ");
 
     }
 
-    formulario.reset();
+}
 
-    await cargarPendientesSupabase();
+/* ============================================
+   DATOS DEL PENDIENTE
+============================================ */
 
-    actualizarTabla();
+const datos = {
 
-    actualizarKanban();
+    folio: await generarFolio(),
 
-    actualizarEstadisticas();
+    titulo: tituloFinal,
+
+    descripcion: txtDescripcion.value.trim(),
+
+    prioridad: cmbPrioridad.value,
+
+    estado: "Pendiente",
+
+    creado_por: usuario,
+
+    asignado_a: responsable
+
+};
+
+console.log("Guardando:", datos);
+
+const pendiente = await guardarPendienteSupabase(datos);
+
+if (!pendiente) {
+
+    alert("No fue posible guardar el pendiente.");
+
+    return;
 
 }
 
+formulario.reset();
+
+pendienteEditando = null;
+
+await cargarUltimoFolioSupabase();
+
+await cargarPendientesSupabase();
+
+actualizarTabla();
+
+actualizarKanban();
+
+actualizarEstadisticas();
+
+console.log("Pendiente creado correctamente.");
+
+}
 /* ==========================================================
    DRAG & DROP
 ========================================================== */
@@ -1249,45 +1260,7 @@ if (btnVoz) {
 
 }
 
-// ==========================================================
-// ASIGNACIÓN SEGÚN PERMISOS
-// ==========================================================
 
-const botonesAsignar = document.querySelectorAll(".btn-asignar");
-const inputAsignado = document.getElementById("asignadoA");
-const contenedorAsignacion = document.querySelector(".usuarios-asignacion");
-
-const usuarioActual =
-    sessionStorage.getItem("usuarioSesionActual");
-
-if (usuarioActual === "jasso" || usuarioActual === "augusto") {
-
-    contenedorAsignacion.style.display = "flex";
-
-    botonesAsignar.forEach(boton => {
-
-        boton.addEventListener("click", () => {
-
-            botonesAsignar.forEach(btn =>
-                btn.classList.remove("activo")
-            );
-
-            boton.classList.add("activo");
-
-            inputAsignado.value =
-                boton.dataset.usuario;
-
-        });
-
-    });
-
-} else {
-
-    contenedorAsignacion.style.display = "none";
-
-    inputAsignado.value = usuarioActual;
-
-}
 
 window.editarPendiente = editarPendiente;
 window.eliminarPendiente = eliminarPendiente;

@@ -25,7 +25,9 @@ function iniciarTema() {
 
 function prepararBotonTema() {
 
-    const boton = document.getElementById("btnTema");
+const boton =
+    document.getElementById("btnModo") ||
+    document.getElementById("btnTema");
 
     if (!boton) return;
 
@@ -76,6 +78,7 @@ function aplicarTema(tema) {
 function actualizarIcono() {
 
     const boton =
+        document.getElementById("btnModo") ||
         document.getElementById("btnTema");
 
     if (!boton) return;
@@ -85,8 +88,8 @@ function actualizarIcono() {
 
     boton.innerHTML = oscuro
 
-        ? '<i class="fa-solid fa-sun"></i> Modo Claro'
+        ? '<i class="fa-solid fa-sun"></i> Claro / Oscuro'
 
-        : '<i class="fa-solid fa-moon"></i> Modo Oscuro';
+        : '<i class="fa-solid fa-moon"></i> Claro / Oscuro';
 
 }
