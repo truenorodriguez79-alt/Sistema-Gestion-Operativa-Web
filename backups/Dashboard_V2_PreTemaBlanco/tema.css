@@ -114,37 +114,11 @@ h1,h2,h3,h4,h5,h6{
 
 }
 
-/* ===== TOPBAR ===== */
-
-.topbar h2{
-
-    color:#ffffff !important;
-
-}
-
-.topbar p{
-
-    color:rgba(255,255,255,.85) !important;
-
-}
-
 p,
 small,
 span,
 label{
 
     color:var(--texto-secundario);
-
-}
-
-#saludo{
-
-    color:#ffffff !important;
-
-}
-
-#saludoRol{
-
-    color:rgba(255,255,255,.85) !important;
 
 }

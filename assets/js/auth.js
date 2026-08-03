@@ -1,105 +1,177 @@
+"use strict";
+
 /* ==========================================================
-   AUTENTICACIÓN
+   AUTH.JS
+   SISTEMA DE GESTIÓN OPERATIVA
 ========================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+console.log("✅ auth.js cargado");
+
+/* ==========================================================
+   VARIABLES GLOBALES
+========================================================== */
+
+let usuarioSesion = null;
+
+/* ==========================================================
+   INICIO
+========================================================== */
+
+document.addEventListener("DOMContentLoaded", iniciarSistema);
+
+/* ==========================================================
+   INICIAR SISTEMA
+========================================================== */
+
+function iniciarSistema() {
+
+    console.log("🚀 Inicializando autenticación...");
+
     prepararLogin();
-});
-
-// ==========================================================
-// PREPARAR LOGIN
-// ==========================================================
-
-function prepararLogin() {
-
-    const form = document.getElementById("loginForm");
-
-    if (form) {
-        form.addEventListener(
-            "submit",
-            iniciarSesion
-        );
-    }
-
-    const boton = document.getElementById("togglePassword");
-
-    if (boton) {
-        boton.addEventListener(
-            "click",
-            mostrarPassword
-        );
-    }
-
-    const cerrar = document.getElementById("btnCerrarSesion");
-
-    if (cerrar) {
-        cerrar.addEventListener(
-            "click",
-            cerrarSesion
-        );
-    }
 
     verificarSesion();
 
 }
 
-// ==========================================================
-// MOSTRAR PASSWORD
-// ==========================================================
+/* ==========================================================
+   PREPARAR LOGIN
+========================================================== */
 
-function mostrarPassword() {
+function prepararLogin() {
 
-    const input =
-        document.getElementById("password");
+    console.log("🔐 Preparando login...");
 
-    if (!input) return;
+    const formulario =
+        document.getElementById("loginForm");
 
-    input.type =
-        input.type === "password"
-        ? "text"
-        : "password";
+    if (formulario) {
+
+        formulario.addEventListener(
+            "submit",
+            iniciarSesion
+        );
+
+    }
+
+    const botonPassword =
+        document.getElementById("togglePassword");
+
+    if (botonPassword) {
+
+        botonPassword.addEventListener(
+            "click",
+            mostrarPassword
+        );
+
+    }
+
+    const botonCerrarSesion =
+        document.getElementById("btnCerrarSesion");
+
+    if (botonCerrarSesion) {
+
+        botonCerrarSesion.addEventListener(
+            "click",
+            cerrarSesion
+        );
+
+    }
+
+    console.log("✅ Eventos del login preparados.");
 
 }
 
-// ==========================================================
-// INICIAR SESIÓN
-// ==========================================================
+/* ==========================================================
+   MOSTRAR / OCULTAR CONTRASEÑA
+========================================================== */
+
+function mostrarPassword() {
+
+    const inputPassword =
+        document.getElementById("password");
+
+    if (!inputPassword) return;
+
+    inputPassword.type =
+
+        inputPassword.type === "password"
+
+            ? "text"
+
+            : "password";
+
+}
+
+/* ==========================================================
+   INICIAR SESIÓN
+========================================================== */
 
 async function iniciarSesion(evento) {
 
     evento.preventDefault();
 
-    const usuario =
-        document
-        .getElementById("usuario")
-        .value
-        .trim()
-        .toLowerCase();
+    const inputUsuario =
+        document.getElementById("usuario");
 
-    const password =
-        document
-        .getElementById("password")
-        .value
-        .trim();
+    const inputPassword =
+        document.getElementById("password");
 
     const mensaje =
         document.getElementById("mensajeLogin");
 
-    mensaje.textContent = "";
+    if (!inputUsuario || !inputPassword) return;
+
+    const usuario =
+        inputUsuario.value.trim().toLowerCase();
+
+    const password =
+        inputPassword.value.trim();
+
+    if (mensaje) {
+        mensaje.textContent = "";
+    }
+
+    if (!usuario || !password) {
+
+        if (mensaje) {
+
+            mensaje.textContent =
+                "Ingresa usuario y contraseña.";
+
+        }
+
+        return;
+
+    }
 
     try {
 
-        const { data, error } =
-            await supabaseClient
+        const {
+
+            data,
+
+            error
+
+        } = await supabaseClient
+
             .from("usuarios")
+
             .select("*")
+
             .eq("usuario", usuario)
+
             .maybeSingle();
 
-        if (error || !data) {
+        if (error) throw error;
 
-            mensaje.textContent =
-                "Usuario no encontrado";
+        if (!data) {
+
+            if (mensaje) {
+
+                mensaje.textContent =
+                    "Usuario no encontrado.";
+
+            }
 
             return;
 
@@ -107,8 +179,12 @@ async function iniciarSesion(evento) {
 
         if (!data.habilitado) {
 
-            mensaje.textContent =
-                "Usuario deshabilitado";
+            if (mensaje) {
+
+                mensaje.textContent =
+                    "Usuario deshabilitado.";
+
+            }
 
             return;
 
@@ -116,26 +192,42 @@ async function iniciarSesion(evento) {
 
         if (data.contrasena !== password) {
 
-            mensaje.textContent =
-                "Contraseña incorrecta";
+            if (mensaje) {
+
+                mensaje.textContent =
+                    "Contraseña incorrecta.";
+
+            }
 
             return;
 
         }
 
-        const fechaAcceso =
+        const fechaActual =
             new Date().toISOString();
 
-        await supabaseClient
-            .from("usuarios")
-            .update({
+        const { error: errorActualizar } =
+            await supabaseClient
 
-                ultimo_acceso: fechaAcceso
+                .from("usuarios")
 
-            })
-            .eq("id", data.id);
+                .update({
 
-        const sesion = {
+                    estado: true,
+
+                    ultimo_acceso: fechaActual
+
+                })
+
+                .eq("id", data.id);
+
+        if (errorActualizar) {
+
+            console.error(errorActualizar);
+
+        }
+
+        usuarioSesion = {
 
             id: data.id,
 
@@ -149,75 +241,96 @@ async function iniciarSesion(evento) {
 
             foto: data.foto,
 
-            ultimo_acceso: fechaAcceso,
+            estado: true,
 
-            estado: data.estado
+            ultimo_acceso: fechaActual
 
         };
 
         localStorage.setItem(
+
             "usuarioSesion",
-            JSON.stringify(sesion)
+
+            JSON.stringify(usuarioSesion)
+
         );
 
-        console.log("Sesión guardada:", sesion);
+        sessionStorage.setItem(
 
-        mostrarDashboard(sesion);
+            "usuarioSesionActual",
 
-    } catch (error) {
+            usuarioSesion.usuario
+
+        );
+
+        sessionStorage.setItem(
+
+            "usuarioId",
+
+            usuarioSesion.id
+
+        );
+
+        sessionStorage.setItem(
+
+            "rolUsuario",
+
+            usuarioSesion.rol_id
+
+        );
+
+        console.log("✅ Sesión iniciada.");
+
+console.log("usuarioSesion:", usuarioSesion);
+
+await actualizarEstadoUsuario(true);
+
+console.log("Conexión enviada a Supabase");
+
+        mostrarDashboard(usuarioSesion);
+
+    }
+
+    catch (error) {
 
         console.error(error);
 
-        mensaje.textContent =
-            "Error al conectar con Supabase";
+        if (mensaje) {
+
+            mensaje.textContent =
+                "Error al conectar con Supabase.";
+
+        }
 
     }
 
 }
 
-// ==========================================================
-// OBTENER FOTO DEL USUARIO
-// ==========================================================
-
-function obtenerFotoUsuario(usuario) {
-
-    switch ((usuario || "").toLowerCase()) {
-
-        case "augusto":
-        case "admin":
-        case "administrador":
-            return "assets/img/usuarios/Admin.avif";
-
-        case "elizabeth":
-        case "liz":
-            return "assets/img/usuarios/LIZ.jpg";
-
-        default:
-            return "assets/img/usuarios/default.png";
-
-    }
-
-}
-
-// ==========================================================
-// MOSTRAR DASHBOARD
-// ==========================================================
+/* ==========================================================
+   MOSTRAR DASHBOARD
+========================================================== */
 
 function mostrarDashboard(usuario) {
 
-console.log("================================");
-    console.log(usuario);
+    console.log("👤 Usuario activo:", usuario);
 
-const login = document.getElementById("loginContainer");
-const dashboard = document.getElementById("dashboardContainer");
+    const login =
+        document.getElementById("loginContainer");
 
-if (login) {
-    login.classList.add("d-none");
-}
+    const dashboard =
+        document.getElementById("dashboardContainer");
 
-if (dashboard) {
-    dashboard.classList.remove("d-none");
-}
+    if (login) {
+
+        login.classList.add("d-none");
+
+    }
+
+    if (dashboard) {
+
+        dashboard.classList.remove("d-none");
+
+    }
 
     const nombre =
         document.getElementById("nombreUsuario");
@@ -225,28 +338,23 @@ if (dashboard) {
     if (nombre) {
 
         nombre.textContent =
-            usuario.nombre_corto;
+            usuario.nombre_corto || usuario.nombre;
 
     }
 
+    const foto =
+        document.getElementById("fotoUsuario");
 
+    if (foto) {
 
-    // ==========================================
-    // FOTO DEL USUARIO
-    // ==========================================
+        foto.src =
+            usuario.foto ||
+            "assets/img/usuarios/default.png";
 
-   const foto =
-    document.getElementById("fotoUsuario");
+        foto.alt =
+            usuario.nombre;
 
-if (foto) {
-
-    foto.src =
-        obtenerFotoUsuario(usuario.usuario);
-
-    foto.alt =
-        usuario.nombre_corto;
-
-}
+    }
 
     const rol =
         document.getElementById("rolUsuario");
@@ -270,11 +378,13 @@ if (foto) {
 
     aplicarPermisos(usuario.rol_id);
 
+    console.log("✅ Dashboard cargado.");
+
 }
 
-// ==========================================================
-// VERIFICAR SESIÓN
-// ==========================================================
+/* ==========================================================
+   VERIFICAR SESIÓN
+========================================================== */
 
 function verificarSesion() {
 
@@ -284,29 +394,164 @@ function verificarSesion() {
     const dashboard =
         document.getElementById("dashboardContainer");
 
-    const sesion =
+    const sesionGuardada =
         localStorage.getItem("usuarioSesion");
 
-    if (!sesion) {
+    // NO EXISTE SESIÓN
 
-        login.classList.remove("d-none");
+    if (!sesionGuardada) {
 
-        dashboard.classList.add("d-none");
+        console.log("ℹ️ No existe una sesión activa.");
+
+        if (login)
+            login.classList.remove("d-none");
+
+        if (dashboard)
+            dashboard.classList.add("d-none");
 
         return;
 
     }
 
-    const usuario =
-        JSON.parse(sesion);
+    try {
 
-    mostrarDashboard(usuario);
+        usuarioSesion =
+            JSON.parse(sesionGuardada);
+
+        sessionStorage.setItem(
+            "usuarioSesionActual",
+            usuarioSesion.usuario
+        );
+
+        sessionStorage.setItem(
+            "usuarioId",
+            usuarioSesion.id
+        );
+
+        sessionStorage.setItem(
+            "rolUsuario",
+            usuarioSesion.rol_id
+        );
+
+
+        
+        mostrarDashboard(usuarioSesion);
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        localStorage.removeItem("usuarioSesion");
+
+        if (login)
+            login.classList.remove("d-none");
+
+        if (dashboard)
+            dashboard.classList.add("d-none");
+
+    }
 
 }
 
-// ==========================================================
-// ROLES
-// ==========================================================
+/* ==========================================================
+   CERRAR SESIÓN
+========================================================== */
+
+async function cerrarSesion() {
+
+    try {
+
+        if (usuarioSesion) {
+
+            await actualizarEstadoUsuario(false);
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+    localStorage.removeItem("usuarioSesion");
+
+    sessionStorage.removeItem("usuarioSesionActual");
+
+    sessionStorage.removeItem("usuarioId");
+
+    sessionStorage.removeItem("rolUsuario");
+
+    usuarioSesion = null;
+
+    location.reload();
+
+}
+
+/* ==========================================================
+   ACTUALIZAR ESTADO DE CONEXIÓN
+========================================================== */
+
+async function actualizarEstadoUsuario(conectado) {
+
+    if (!usuarioSesion) return;
+
+    try {
+
+        const { error } = await supabaseClient
+
+            .from("usuarios")
+
+            .update({
+
+                conectado: conectado,
+
+                ultimo_acceso: new Date().toISOString()
+
+            })
+
+            .eq("id", usuarioSesion.id);
+
+        if (error) throw error;
+
+        usuarioSesion.conectado = conectado;
+
+        localStorage.setItem(
+
+            "usuarioSesion",
+
+            JSON.stringify(usuarioSesion)
+
+        );
+
+        console.log(
+
+            conectado
+                ? "🟢 Usuario conectado."
+                : "⚫ Usuario desconectado."
+
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+
+            "Error actualizando conexión:",
+
+            error
+
+        );
+
+    }
+
+}
+
+/* ==========================================================
+   ROLES Y PERMISOS
+========================================================== */
 
 function obtenerNombreRol(rol) {
 
@@ -331,97 +576,196 @@ function obtenerNombreRol(rol) {
 
 }
 
-// ==========================================================
-// CERRAR SESIÓN
-// ==========================================================
+function aplicarPermisos(rol) {
 
-function cerrarSesion() {
+    const menu = {
 
-    localStorage.removeItem(
-        "usuarioSesion"
-    );
+        usuarios: document.getElementById("menuUsuarios"),
 
-    document
-        .getElementById("dashboardContainer")
-        .classList
-        .add("d-none");
+        reportes: document.getElementById("menuReportes"),
 
-    document
-        .getElementById("loginContainer")
-        .classList
-        .remove("d-none");
+        pendientes: document.getElementById("menuPendientes"),
 
-    document.getElementById("usuario").value = "";
-    document.getElementById("password").value = "";
+        evidencias: document.getElementById("menuEvidencias")
+
+    };
+
+    // Ocultar todo primero
+
+    Object.values(menu).forEach(item => {
+
+        if (item) {
+
+            item.style.display = "none";
+
+        }
+
+    });
+
+    switch (rol) {
+
+        // Administrador
+
+        case 1:
+
+            Object.values(menu).forEach(item => {
+
+                if (item) {
+
+                    item.style.display = "flex";
+
+                }
+
+            });
+
+            break;
+
+        // Jefe de Área
+
+        case 2:
+
+            if (menu.reportes)
+                menu.reportes.style.display = "flex";
+
+            if (menu.pendientes)
+                menu.pendientes.style.display = "flex";
+
+            if (menu.evidencias)
+                menu.evidencias.style.display = "flex";
+
+            break;
+
+        // Operador
+
+        case 3:
+
+            if (menu.pendientes)
+                menu.pendientes.style.display = "flex";
+
+            if (menu.evidencias)
+                menu.evidencias.style.display = "flex";
+
+            break;
+
+        // Invitado
+
+        case 4:
+
+            if (menu.evidencias)
+                menu.evidencias.style.display = "flex";
+
+            break;
+
+    }
 
 }
 
-// ==========================================================
-// PERMISOS DE MENÚ
-// ==========================================================
+/* ==========================================================
+   ROLES Y PERMISOS
+========================================================== */
+
+function obtenerNombreRol(rol) {
+
+    switch (rol) {
+
+        case 1:
+            return "Administrador";
+
+        case 2:
+            return "Jefe de Área";
+
+        case 3:
+            return "Operador";
+
+        case 4:
+            return "Invitado";
+
+        default:
+            return "Usuario";
+
+    }
+
+}
 
 function aplicarPermisos(rol) {
 
-    const usuarios =
-        document.getElementById("menuUsuarios");
+    const menu = {
 
-    const reportes =
-        document.getElementById("menuReportes");
+        usuarios: document.getElementById("menuUsuarios"),
 
-    const pendientes =
-        document.getElementById("menuPendientes");
+        reportes: document.getElementById("menuReportes"),
 
-    const evidencias =
-        document.getElementById("menuEvidencias");
+        pendientes: document.getElementById("menuPendientes"),
 
-    // Administrador
+        evidencias: document.getElementById("menuEvidencias")
 
-    if (rol === 1) {
+    };
 
-        if (usuarios)
-            usuarios.style.display = "flex";
+    // Ocultar todo primero
 
-        if (reportes)
-            reportes.style.display = "flex";
+    Object.values(menu).forEach(item => {
 
-        if (pendientes)
-            pendientes.style.display = "flex";
+        if (item) {
 
-        if (evidencias)
-            evidencias.style.display = "flex";
+            item.style.display = "none";
 
-    }
+        }
 
-    // Jefe de Área
+    });
 
-    if (rol === 2) {
+    switch (rol) {
 
-        usuarios.style.display = "none";
-        reportes.style.display = "flex";
-        pendientes.style.display = "flex";
-        evidencias.style.display = "flex";
+        // Administrador
 
-    }
+        case 1:
 
-    // Operador
+            Object.values(menu).forEach(item => {
 
-    if (rol === 3) {
+                if (item) {
 
-        usuarios.style.display = "none";
-        reportes.style.display = "none";
-        pendientes.style.display = "flex";
-        evidencias.style.display = "flex";
+                    item.style.display = "flex";
 
-    }
+                }
 
-    // Invitado
+            });
 
-    if (rol === 4) {
+            break;
 
-        usuarios.style.display = "none";
-        reportes.style.display = "none";
-        pendientes.style.display = "none";
-        evidencias.style.display = "flex";
+        // Jefe de Área
+
+        case 2:
+
+            if (menu.reportes)
+                menu.reportes.style.display = "flex";
+
+            if (menu.pendientes)
+                menu.pendientes.style.display = "flex";
+
+            if (menu.evidencias)
+                menu.evidencias.style.display = "flex";
+
+            break;
+
+        // Operador
+
+        case 3:
+
+            if (menu.pendientes)
+                menu.pendientes.style.display = "flex";
+
+            if (menu.evidencias)
+                menu.evidencias.style.display = "flex";
+
+            break;
+
+        // Invitado
+
+        case 4:
+
+            if (menu.evidencias)
+                menu.evidencias.style.display = "flex";
+
+            break;
 
     }
 

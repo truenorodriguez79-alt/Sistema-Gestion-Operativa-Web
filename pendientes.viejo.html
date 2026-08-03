@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Pendientes</title>
+
+    <!-- ==========================================================
+         BOOTSTRAP
+    ========================================================== -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- ==========================================================
+         FONT AWESOME
+    ========================================================== -->
+
+    <script
+        src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+        crossorigin="anonymous"></script>
+
+    <!-- ==========================================================
+         CSS
+    ========================================================== -->
+
+    <link rel="stylesheet"
+          href="assets/css/styles.css">
+
+    <link rel="stylesheet"
+          href="assets/css/dashboard.css">
+
+    <link rel="stylesheet"
+          href="assets/css/pendientes.css">
+
+</head>
+
+<body>
+
+    <!-- ==========================================================
+         CONTENEDOR PRINCIPAL
+    ========================================================== -->
+
+    <div id="appPendientes">
+
+        <!-- ==========================================================
+             CONTENEDOR GENERAL
+        ========================================================== -->
+
+        <div class="contenedor-pendientes">
+
+            <!-- ==========================================================
+                 SIDEBAR
+            ========================================================== -->
+
+            <aside class="sidebar">
+
+                <div class="sidebar-logo">
+
+                    <img
+                        src="assets/img/logos/logo.png"
+                        alt="Logo CFE">
+
+                    <div>
+
+                        <h2>Gestión Operativa</h2>
+
+                        <small>Control • Eficiencia • Resultados</small>
+
+                    </div>
+
+                </div>
+
+           <nav class="sidebar-menu">
+
+            <!-- ==========================================================
+     TARJETA DEL USUARIO
+========================================================== -->
+
+<div class="sidebar-user-card">
+
+    <img
+        id="fotoUsuarioSidebar"
+        src="assets/img/team/default.png"
+        alt="Usuario"
+        class="sidebar-user-photo">
+
+    <h3 id="nombreUsuarioSidebar">
+        Cargando...
+    </h3>
+
+    <span class="estado-sidebar">
+
+        <i class="fa-solid fa-circle"></i>
+
+        Sesión activa
+
+    </span>
+
+</div>
+
+    <a href="index.html" id="menuInicio">
+
+        <i class="fa-solid fa-house"></i>
+
+        <span>Inicio</span>
+
+    </a>
+
+    <a href="#" class="activo">
+
+        <i class="fa-solid fa-list-check"></i>
+
+        <span>Pendientes</span>
+
+    </a>
+
+    <hr>
+
+    <a href="index.html" id="btnRegresarDashboard">
+
+        <i class="fa-solid fa-arrow-left"></i>
+
+        <span>Regresar al Dashboard</span>
+
+    </a>
+
+</nav>
+
+            </aside>
+
+            <!-- ==========================================================
+                 CONTENIDO
+            ========================================================== -->
+
+            <main id="contenidoPendientes">
+
+                <!-- ======================================================
+                     HEADER
+                ======================================================= -->
+
+                <header class="topbar">
+
+                    <div>
+
+                        <h2 id="saludo">
+
+                            Gestión Integral de Pendientes
+
+                        </h2>
+
+                        <p id="saludoRol">
+
+                            Administración de actividades
+
+                        </p>
+
+                    </div>
+
+                    <div class="usuario-box">
+
+                        <div class="usuario-info">
+
+                            <span id="nombreUsuario"></span>
+
+                            <small id="rolUsuario"></small>
+
+                            <small id="estadoUsuario">
+
+                                Sesión activa
+
+                            </small>
+
+                        </div>
+
+                        <button
+                            id="btnCerrarSesion"
+                            class="btn-cerrar-sesion">
+
+                            <i class="fa-solid fa-right-from-bracket"></i>
+
+                            Salir
+
+                        </button>
+
+                    </div>
+
+                </header>
+
+                <!-- ======================================================
+                     CUERPO
+                ======================================================= -->
+
+                <section id="cuerpoPendientes">
+
+                    <!-- PANEL IZQUIERDO -->
+
+                   <aside id="panelIzquierdo">
+
+    <div class="dashboard-card">
+
+        <h3>
+
+            <i class="fa-solid fa-circle-plus"></i>
+
+            Nuevo Pendiente
+
+        </h3>
+
+        <hr>
+
+        <div class="form-group">
+
+            <label>Título</label>
+
+            <input
+                type="text"
+                id="tituloPendiente"
+                class="form-control"
+                placeholder="Título del pendiente">
+
+        </div>
+
+        <div class="form-group mt-3">
+
+            <label>Descripción</label>
+
+            <textarea
+                id="descripcionPendiente"
+                class="form-control"
+                rows="5"
+                placeholder="Describe el trabajo..."></textarea>
+
+        </div>
+
+        <div
+            id="contenedorAsignacion"
+            class="form-group mt-3"
+            style="display:none;">
+
+            <label>Asignar a</label>
+
+            <select
+                id="usuarioAsignado"
+                class="form-select">
+
+                <option value="">Seleccione un usuario</option>
+
+                <option value="elizabeth">Elizabeth</option>
+
+                <option value="enrique">Enrique</option>
+
+                <option value="jasso">Jasso</option>
+
+            </select>
+
+        </div>
+
+        <div class="form-group mt-3">
+
+            <label>Prioridad</label>
+
+            <select
+                id="prioridadPendiente"
+                class="form-select">
+
+                <option value="Baja">Baja</option>
+
+                <option value="Media">Media</option>
+
+                <option value="Alta">Alta</option>
+
+                <option value="Urgente">Urgente</option>
+
+            </select>
+
+        </div>
+
+        <div class="form-group mt-3">
+
+            <label>Fecha límite</label>
+
+            <input
+                type="date"
+                id="fechaLimite"
+                class="form-control">
+
+        </div>
+
+        <div class="d-grid mt-4">
+
+            <button
+                id="btnGuardarPendiente"
+                class="btn btn-success">
+
+                <i class="fa-solid fa-floppy-disk"></i>
+
+                Guardar Pendiente
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-card mt-4">
+
+        <h3>
+
+            <i class="fa-solid fa-microphone"></i>
+
+            Dictado por Voz
+
+        </h3>
+
+        <hr>
+
+        <p>
+
+            Próximamente podrás crear pendientes usando tu voz.
+
+        </p>
+
+        <button
+            id="btnVoz"
+            class="btn btn-primary w-100">
+
+            <i class="fa-solid fa-microphone-lines"></i>
+
+            Iniciar Dictado
+
+        </button>
+
+    </div>
+
+</aside>
+
+                    <!-- PANEL CENTRAL -->
+
+                   <section id="panelCentral">
+
+    <div class="dashboard-card">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <h3>
+
+                <i class="fa-solid fa-list-check"></i>
+
+                Lista de Pendientes
+
+            </h3>
+
+            <input
+                type="search"
+                id="buscarPendiente"
+                class="form-control"
+                style="max-width:300px;"
+                placeholder="Buscar pendiente...">
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Folio</th>
+
+                        <th>Título</th>
+
+                        <th>Responsable</th>
+
+                        <th>Prioridad</th>
+
+                        <th>Estado</th>
+
+                        <th>Fecha límite</th>
+
+                        <th>Acciones</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tablaPendientes">
+
+                    <tr>
+
+                        <td colspan="7" class="text-center text-muted">
+
+                            No hay pendientes registrados.
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-card mt-4">
+
+        <h3>
+
+            <i class="fa-solid fa-table-columns"></i>
+
+            Tablero Kanban
+
+        </h3>
+
+        <hr>
+
+        <div class="kanban">
+
+            <div class="kanban-columna">
+
+                <h5>Pendientes</h5>
+
+                <div id="kanbanPendientes"></div>
+
+            </div>
+
+            <div class="kanban-columna">
+
+                <h5>En proceso</h5>
+
+                <div id="kanbanProceso"></div>
+
+            </div>
+
+            <div class="kanban-columna">
+
+                <h5>Finalizados</h5>
+
+                <div id="kanbanFinalizados"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+                    <!-- PANEL DERECHO -->
+
+                  <aside id="panelDerecho">
+
+    <div class="dashboard-card">
+
+        <h3>
+
+            <i class="fa-solid fa-chart-pie"></i>
+
+            Resumen General
+
+        </h3>
+
+        <hr>
+
+        <div class="resumen-item">
+
+            <span>Pendientes</span>
+
+            <strong id="totalPendientes">0</strong>
+
+        </div>
+
+        <div class="resumen-item">
+
+            <span>En proceso</span>
+
+            <strong id="totalProceso">0</strong>
+
+        </div>
+
+        <div class="resumen-item">
+
+            <span>Finalizados</span>
+
+            <strong id="totalFinalizados">0</strong>
+
+        </div>
+
+        <div class="resumen-item">
+
+            <span>Urgentes</span>
+
+            <strong id="totalUrgentes">0</strong>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-card mt-4">
+
+        <h3>
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            Actividad Reciente
+
+        </h3>
+
+        <hr>
+
+        <div id="actividadReciente">
+
+            <p class="text-muted">
+
+                Sin actividad registrada.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="dashboard-card mt-4">
+
+        <h3>
+
+            <i class="fa-solid fa-robot"></i>
+
+            Asistente IA
+
+        </h3>
+
+        <hr>
+
+        <div id="panelIA">
+
+            <p>
+
+                El asistente analizará los pendientes y mostrará recomendaciones.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</aside>
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/supabaseClient.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/pendientes-supabaseClient.js"></script>
+<script src="assets/js/pendientes.js"></script>
+
+    <!-- Bootstrap -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

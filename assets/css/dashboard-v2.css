@@ -1,0 +1,833 @@
+/* ==========================================================
+   DASHBOARD V2
+   Sistema de Gestión Operativa
+========================================================== */
+
+/* ==========================================================
+   VARIABLES
+========================================================== */
+
+:root{
+
+    --sidebar-width:260px;
+
+    --primario:#006847;
+
+    --primario-hover:#008b5d;
+
+    --secundario:#00b67a;
+
+    --bg:#08131d;
+
+    --bg-secundario:#0f1c29;
+
+    --bg-terciario:#162533;
+
+    --texto:#ffffff;
+
+    --texto-secundario:#b7c4cf;
+
+    --borde:rgba(255,255,255,.08);
+
+    --sombra:
+        0 10px 35px rgba(0,0,0,.28);
+
+    --radio:18px;
+
+    --transicion:.30s ease;
+
+}
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    background:var(--bg);
+
+    color:var(--texto);
+
+    font-family:"Segoe UI",Arial,sans-serif;
+
+    line-height:1.5;
+
+    overflow-x:hidden;
+
+    transition:
+        background var(--transicion),
+        color var(--transicion);
+
+}
+
+img{
+
+    display:block;
+
+    max-width:100%;
+
+}
+
+a{
+
+    color:inherit;
+
+    text-decoration:none;
+
+}
+
+button{
+
+    font:inherit;
+
+    border:none;
+
+    outline:none;
+
+    cursor:pointer;
+
+}
+
+input,
+select,
+textarea{
+
+    font:inherit;
+
+}
+
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.dashboard{
+
+    display:grid;
+
+    grid-template-columns:
+        var(--sidebar-width)
+        1fr;
+
+    min-height:100vh;
+
+    width:100%;
+
+}
+
+.sidebar{
+
+    width:var(--sidebar-width);
+
+    min-height:100vh;
+
+}
+
+.contenido{
+
+    display:flex;
+
+    flex-direction:column;
+
+    min-width:0;
+
+    min-height:100vh;
+
+    margin-left:var(--sidebar-width);
+
+}
+
+.contenido-dashboard{
+
+    flex:1;
+
+    width:100%;
+
+    padding:30px;
+
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:var(--sidebar-width);
+
+    height:100vh;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:var(--bg-secundario);
+
+    border-right:1px solid var(--borde);
+
+    box-shadow:var(--sombra);
+
+    overflow-y:auto;
+
+    z-index:1000;
+
+    transition:
+        background var(--transicion),
+        border-color var(--transicion);
+
+}
+
+.sidebar-logo{
+
+    padding:28px 24px;
+
+    text-align:center;
+
+}
+
+.sidebar-logo img{
+
+    width:95px;
+
+    margin:0 auto 14px;
+
+}
+
+.sidebar-logo h2{
+
+    color:var(--texto);
+
+    font-size:24px;
+
+    font-weight:700;
+
+    margin-bottom:6px;
+
+}
+
+.sidebar-logo small{
+
+    display:block;
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+
+    line-height:1.4;
+
+}
+
+.sidebar-menu{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    padding:18px;
+
+    margin-top:10px;
+
+    flex:1;
+
+}
+
+/* ==========================================================
+   MENÚ LATERAL
+========================================================== */
+
+.sidebar-menu a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    width:100%;
+
+    padding:16px 18px;
+
+    border-radius:14px;
+
+    color:var(--texto);
+
+    font-size:15px;
+
+    font-weight:500;
+
+    transition:
+        background var(--transicion),
+        color var(--transicion),
+        transform var(--transicion);
+
+}
+
+.sidebar-menu a i{
+
+    width:22px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    color:inherit;
+
+}
+
+.sidebar-menu a:hover{
+
+    background:rgba(0,104,71,.12);
+
+    color:var(--primario);
+
+    transform:translateX(4px);
+
+}
+
+.sidebar-menu a.activo{
+
+    background:linear-gradient(
+        90deg,
+        var(--primario),
+        var(--secundario)
+    );
+
+    color:#ffffff;
+
+    font-weight:600;
+
+    box-shadow:
+        0 10px 25px rgba(0,104,71,.30);
+
+}
+
+.sidebar-menu a.activo i{
+
+    color:#ffffff;
+
+}
+
+/* ==========================================================
+   TOPBAR
+========================================================== */
+
+.topbar{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:900;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    flex-wrap:nowrap;
+
+    width:100%;
+
+    gap:20px;
+
+    padding:18px 30px;
+
+    background:var(--bg-secundario);
+
+    border-bottom:1px solid var(--borde);
+
+}
+
+.topbar-right{
+
+    margin-left:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    flex-wrap:nowrap;
+
+}
+
+.topbar > div:first-of-type{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+.topbar h2{
+
+    color:var(--texto);
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.topbar p{
+
+    color:var(--texto-secundario);
+
+    font-size:14px;
+
+}
+
+.usuario-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:10px 16px;
+
+    border:1px solid var(--borde);
+
+    border-radius:16px;
+
+    background:var(--bg);
+
+    transition:var(--transicion);
+
+}
+
+.usuario-box:hover{
+
+    border-color:var(--primario);
+
+}
+
+.usuario-avatar{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:2px solid var(--primario);
+
+}
+
+.usuario-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+}
+
+.usuario-info span{
+
+    font-weight:700;
+
+    color:var(--texto);
+
+}
+
+.usuario-info small{
+
+    color:var(--texto-secundario);
+
+    font-size:13px;
+
+}
+
+.btn-dashboard{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:14px 22px;
+
+    border-radius:14px;
+
+    background:linear-gradient(
+        135deg,
+        var(--primario),
+        var(--secundario)
+    );
+
+    color:#fff;
+
+    font-weight:600;
+
+    transition:var(--transicion);
+
+}
+
+.btn-dashboard:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.btn-cerrar-sesion{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    padding:14px 22px;
+
+    border-radius:14px;
+
+    background:#d64545;
+
+    color:#fff;
+
+    transition:var(--transicion);
+
+}
+
+.btn-cerrar-sesion:hover{
+
+    transform:translateY(-2px);
+
+    background:#bf3535;
+
+}
+
+/* ==========================================================
+   HERO DASHBOARD
+========================================================== */
+
+.hero-dashboard{
+
+    display:grid;
+
+    grid-template-columns:2.2fr 1fr;
+
+    gap:30px;
+
+    margin-bottom:35px;
+
+    align-items:stretch;
+
+}
+
+.dashboard-card{
+
+    background:var(--bg-secundario);
+
+    border:1px solid var(--borde);
+
+    border-radius:var(--radio);
+
+    box-shadow:var(--sombra);
+
+    transition:var(--transicion);
+
+}
+
+.hero-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    padding:50px;
+
+    min-height:480px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b1824 0%,
+            #102738 55%,
+            #0d5138 100%
+        );
+
+}
+
+.hero-etiqueta{
+
+    display:inline-block;
+
+    width:max-content;
+
+    margin-bottom:22px;
+
+    padding:8px 18px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.08);
+
+    color:#7cf0c4;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+}
+
+.hero-info h1{
+
+    margin-bottom:22px;
+
+    color:#ffffff;
+
+    font-size:54px;
+
+    line-height:1.05;
+
+    font-weight:900;
+
+}
+
+.hero-info p{
+
+    max-width:720px;
+
+    margin-bottom:35px;
+
+    color:#d5e2ea;
+
+    font-size:18px;
+
+    line-height:1.8;
+
+}
+
+/* ==========================================================
+   HERO ACCIONES Y RESUMEN
+========================================================== */
+
+.hero-actions{
+
+    display:flex;
+
+    gap:18px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:35px;
+
+}
+
+.hero-stats{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:18px;
+
+}
+
+.hero-stat{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px;
+
+    border-radius:16px;
+
+    background:rgba(255,255,255,.06);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    backdrop-filter:blur(8px);
+
+}
+
+.hero-stat i{
+
+    font-size:28px;
+
+    color:var(--secundario);
+
+}
+
+.hero-stat strong{
+
+    display:block;
+
+    color:#ffffff;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+.hero-stat span{
+
+    color:#d0dde6;
+
+    font-size:14px;
+
+}
+
+.hero-resumen{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+    padding:35px;
+
+}
+
+.hero-resumen h2{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:10px;
+
+    color:var(--texto);
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.resumen-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 18px;
+
+    border-radius:14px;
+
+    background:var(--bg-terciario);
+
+}
+
+.resumen-item span{
+
+    color:var(--texto-secundario);
+
+}
+
+.resumen-item strong{
+
+    color:var(--secundario);
+
+}
+
+.hero-resumen hr{
+
+    border:none;
+
+    height:1px;
+
+    background:var(--borde);
+
+    margin:6px 0;
+
+}
+
+#heroMensaje{
+
+    color:var(--texto-secundario);
+
+    line-height:1.6;
+
+}
+
+.hero-progress{
+
+    width:100%;
+
+    height:12px;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.08);
+
+}
+
+.hero-progress-fill{
+
+    width:0;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        var(--primario),
+        var(--secundario)
+    );
+
+    transition:.5s ease;
+
+}
+
+#heroPorcentaje{
+
+    margin-top:10px;
+
+    color:var(--secundario);
+
+    font-weight:600;
+
+}

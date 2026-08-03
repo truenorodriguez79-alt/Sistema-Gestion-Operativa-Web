@@ -1,7 +1,7 @@
-[1mdiff --git a/assets/js/pendientes-supabase.js b/assets/js/pendientes-supabase.js[m
+[1mdiff --git a/assets/js/pendientes-supabaseClient.js b/assets/js/pendientes-supabaseClient.js[m
 [1mindex e3e287f..d3aaefc 100644[m
-[1m--- a/assets/js/pendientes-supabase.js[m
-[1m+++ b/assets/js/pendientes-supabase.js[m
+[1m--- a/assets/js/pendientes-supabaseClient.js[m
+[1m+++ b/assets/js/pendientes-supabaseClient.js[m
 [36m@@ -47,4 +47,23 @@[m [masync function guardarPendienteSupabase(nuevo) {[m
      }[m
  [m

@@ -1,0 +1,3741 @@
+<!-- TABLAS -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Excel a Tablas y Gráficas</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabaseClient.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+    
+/* ========================= */
+/* AJUSTE RESPONSIVE NUEVO */
+/* ========================= */
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    overflow-x:auto;
+}
+
+/* IMPORTANTE:
+   No usamos zoom porque descalibra el mouse en Chart.js.
+   Así los tooltips y la selección de barras quedan exactos.
+*/
+
+@media(min-width:1600px){
+    .archivo-seccion{
+        min-width:1200px !important;
+    }
+}
+
+@media(max-width:1366px){
+    .archivo-seccion{
+        min-width:950px !important;
+    }
+}
+
+@media(max-width:900px){
+    .archivo-seccion{
+        min-width:850px !important;
+    }
+}
+
+@media(max-width:600px){
+    .archivo-seccion{
+        min-width:700px !important;
+    }
+}
+
+body{
+    background:#071b11;
+    color:white;
+    overflow-x:auto;
+}
+
+body.modo-claro{
+    background:#f2f2f2;
+    color:#111;
+}
+
+.container-fluid{
+    padding:30px;
+}
+
+h1{
+    text-align:center;
+    font-size:50px;
+    margin-bottom:30px;
+    font-weight:bold;
+    letter-spacing:2px;
+    text-shadow:0 0 15px rgba(0,255,120,0.3);
+}
+
+input[type="file"],
+input[type="text"],
+select{
+    background:#111;
+    color:white;
+    border:1px solid #444;
+    padding:12px;
+    border-radius:12px;
+    font-size:18px;
+    transition:0.3s;
+}
+
+input[type="text"]:focus,
+select:focus{
+    outline:none;
+    border:1px solid #00ff88;
+    box-shadow:0 0 15px rgba(0,255,120,0.35);
+}
+
+body.modo-claro input,
+body.modo-claro select{
+    background:white;
+    color:#111;
+}
+
+.buscadores-box{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.buscadores-box input{
+    width:35%;
+    min-width:320px;
+}
+
+.btn-custom{
+    background:#00aa55;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:12px;
+    font-size:18px;
+    margin:5px;
+    transition:0.3s;
+}
+
+.btn-custom:hover{
+    background:#00cc66;
+    transform:translateY(-3px);
+    box-shadow:0 0 18px rgba(0,255,120,0.35);
+}
+
+.btn-regresar{
+    position:fixed;
+    top:20px;
+    left:20px;
+    z-index:9999;
+    background:#00aa55;
+    color:white !important;
+    text-decoration:none;
+    padding:14px 24px;
+    border-radius:15px;
+    font-size:18px;
+    font-weight:bold;
+    box-shadow:0 0 15px rgba(0,255,120,0.4);
+    transition:0.3s;
+    border:1px solid rgba(255,255,255,0.1);
+    backdrop-filter:blur(8px);
+}
+
+.btn-regresar:hover{
+    background:#00cc66;
+    transform:scale(1.05);
+}
+
+.progress{
+    height:28px;
+    background:#222;
+    border-radius:20px;
+    overflow:hidden;
+    display:none;
+}
+
+.progress-bar{
+    font-weight:bold;
+    font-size:16px;
+}
+
+.resumen-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.resumen-card{
+    background:#111;
+    border:1px solid #00aa55;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 0 25px rgba(0,255,120,0.15);
+    transition:0.3s;
+    cursor:pointer;
+}
+
+.resumen-card:hover{
+    transform:translateY(-8px);
+    box-shadow:
+    0 0 30px rgba(0,255,120,0.35),
+    0 0 50px rgba(255,255,0,0.12);
+}
+
+.resumen-card h3{
+    font-size:42px;
+    font-weight:bold;
+    margin:0;
+}
+
+.resumen-card p{
+    font-size:18px;
+    margin:5px 0 0 0;
+    color:#cfcfcf;
+}
+
+body.modo-claro .resumen-card{
+    background:white;
+    color:#111;
+}
+
+body.modo-claro .resumen-card p{
+    color:#333;
+}
+
+.selector-box{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.selector-box label{
+    font-size:20px;
+    font-weight:bold;
+    margin-right:10px;
+}
+
+.archivos-box,
+.archivo-seccion,
+.card-grafica{
+    background:#111;
+    border-radius:20px;
+}
+
+body.modo-claro .archivos-box,
+body.modo-claro .archivo-seccion,
+body.modo-claro .card-grafica{
+    background:white;
+    color:#111;
+}
+
+.archivos-box{
+    padding:20px;
+    margin-bottom:30px;
+    border:1px solid #333;
+}
+
+.archivos-scroll{
+    overflow-x:auto;
+}
+
+.archivos-tabla{
+    width:100%;
+    min-width:700px;
+}
+
+.archivos-tabla th{
+    background:#00aa55;
+    padding:15px;
+    color:white;
+}
+
+.archivos-tabla td{
+    background:#1a1a1a;
+    padding:15px;
+    color:white;
+}
+
+body.modo-claro .archivos-tabla td{
+    background:#eaeaea;
+    color:#111;
+}
+
+#contenedorArchivos{
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+    align-items:flex-start;
+    gap:40px;
+    overflow-x:auto;
+    scroll-behavior:smooth;
+    padding-bottom:20px;
+    padding-top:10px;
+}
+
+.archivo-seccion{
+    min-width:1000px;
+    padding:25px;
+    box-shadow:
+    0 0 25px rgba(0,255,120,0.2),
+    0 0 35px rgba(255,255,0,0.1);
+    animation:entradaDerecha 0.8s ease;
+    transition:0.4s;
+}
+
+@keyframes entradaDerecha{
+    from{
+        opacity:0;
+        transform:translateX(350px);
+    }
+    to{
+        opacity:1;
+        transform:translateX(0);
+    }
+}
+
+.table-responsive{
+    max-height:450px;
+    overflow:auto;
+    border-radius:15px;
+}
+
+table{
+    background:#111 !important;
+    color:white !important;
+}
+
+body.modo-claro table{
+    background:white !important;
+    color:#111 !important;
+}
+
+th{
+    background:#00aa55 !important;
+    color:white !important;
+    position:sticky;
+    top:0;
+}
+
+td{
+    background:#1b1b1b !important;
+    color:white !important;
+}
+
+body.modo-claro td{
+    background:#f5f5f5 !important;
+    color:#111 !important;
+}
+
+.card-grafica{
+    padding:20px;
+    margin-top:35px;
+    width:100%;
+    overflow-x:auto;
+    transition:0.4s;
+}
+
+.card-grafica:hover{
+    box-shadow:0 0 30px rgba(0,255,120,0.25);
+}
+
+.card-grafica h4{
+    color:white;
+    font-weight:bold;
+}
+
+body.modo-claro .card-grafica h4{
+    color:#111;
+}
+
+canvas{
+    background:#111;
+    border-radius:20px;
+    padding:15px;
+    min-height:380px;
+}
+
+body.modo-claro canvas{
+    background:#f0f0f0;
+}
+
+.ia-box{
+    background:#0b2b1a;
+    padding:18px;
+    border-radius:15px;
+    margin-top:15px;
+    border-left:6px solid #00ff88;
+    font-size:18px;
+    box-shadow:0 0 18px rgba(0,255,120,0.18);
+}
+
+body.modo-claro .ia-box{
+    background:#e8fff1;
+    color:#111;
+}
+
+::-webkit-scrollbar{
+    height:10px;
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#111;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#00ff88;
+    border-radius:10px;
+}
+
+@media(max-width:900px){
+    .resumen-grid{
+        grid-template-columns:1fr;
+    }
+
+    .buscadores-box input{
+        width:100%;
+        min-width:0;
+    }
+
+    h1{
+        font-size:32px;
+    }
+
+    .archivo-seccion{
+        min-width:850px;
+    }
+
+    canvas{
+        min-height:350px;
+    }
+}
+
+/* ========================= */
+/* NUEVO DISEÑO DASHBOARD */
+/* ========================= */
+
+:root{
+    --dash-bg:#020806;
+    --dash-panel:rgba(7,24,18,0.86);
+    --dash-panel-2:rgba(12,34,26,0.88);
+    --dash-border:rgba(0,255,136,0.22);
+    --dash-green:#00c86f;
+    --dash-green-2:#00ff88;
+    --dash-text:#f4fff8;
+    --dash-muted:#a9c7b7;
+}
+
+body{
+    background:
+        radial-gradient(circle at 20% 10%, rgba(0,255,136,0.16), transparent 28%),
+        radial-gradient(circle at 90% 20%, rgba(0,120,255,0.10), transparent 24%),
+        linear-gradient(135deg,#020806,#06170f 55%,#020806) !important;
+    color:var(--dash-text);
+    min-height:100vh;
+}
+
+body::before{
+    display:none !important;
+    content:"";
+    position:fixed;
+    left:0;
+    top:0;
+    width:260px;
+    height:100vh;
+    background:
+        linear-gradient(180deg,rgba(0,255,136,0.10),rgba(0,0,0,0.20)),
+        radial-gradient(circle at 40% 70%, rgba(0,255,136,0.18), transparent 35%);
+    border-right:1px solid var(--dash-border);
+    pointer-events:none;
+    z-index:1;
+}
+
+.dashboard-side{
+    position:fixed;
+    left:0;
+    top:0;
+    width:260px;
+    height:100vh;
+    z-index:20;
+    padding:28px 18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.side-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:36px;
+}
+
+.side-logo{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#00c86f,#007f47);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:25px;
+    box-shadow:0 0 22px rgba(0,255,136,0.28);
+}
+
+.side-brand h2{
+    font-size:21px;
+    margin:0;
+    color:white;
+    font-weight:800;
+}
+
+.side-brand p{
+    margin:0;
+    color:var(--dash-muted);
+    font-size:13px;
+}
+
+.side-menu{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.side-menu a,
+.side-bottom{
+    color:white;
+    text-decoration:none;
+    padding:14px 16px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-weight:700;
+    border:1px solid transparent;
+    transition:0.25s;
+}
+
+.side-menu a:hover,
+.side-menu a.active{
+    background:linear-gradient(135deg,rgba(0,200,111,0.95),rgba(0,120,70,0.85));
+    border-color:rgba(255,255,255,0.14);
+    transform:translateX(4px);
+    box-shadow:0 0 24px rgba(0,255,136,0.18);
+}
+
+.side-bottom{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--dash-border);
+    color:var(--dash-muted);
+}
+
+.dashboard-topbar{
+    position:fixed;
+    left:0;
+    right:0;
+    top:0;
+    height:86px;
+    z-index:30;
+    background:rgba(2,8,6,0.72);
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--dash-border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 34px;
+}
+
+.top-title{
+    display:flex;
+    flex-direction:column;
+}
+
+.top-title strong{
+    font-size:22px;
+    color:white;
+}
+
+.top-title span{
+    color:var(--dash-muted);
+    font-size:14px;
+}
+
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.top-btn,
+.btn-custom,
+.btn-regresar{
+    background:rgba(255,255,255,0.05) !important;
+    color:white !important;
+    border:1px solid var(--dash-border) !important;
+    border-radius:14px !important;
+    padding:12px 20px !important;
+    font-size:16px !important;
+    font-weight:700 !important;
+    box-shadow:none !important;
+    transition:0.25s !important;
+    text-decoration:none !important;
+    cursor:pointer;
+}
+
+.top-btn:hover,
+.btn-custom:hover,
+.btn-regresar:hover{
+    background:linear-gradient(135deg,#00c86f,#007f47) !important;
+    transform:translateY(-2px) !important;
+    box-shadow:0 0 25px rgba(0,255,136,0.22) !important;
+}
+
+.btn-regresar{
+    position:static !important;
+}
+
+#excelFile{
+    display:none;
+}
+
+.container-fluid{
+    padding:118px 34px 34px 34px !important;
+}
+
+h1{
+    text-align:left !important;
+    font-size:38px !important;
+    margin-bottom:12px !important;
+    text-shadow:none !important;
+}
+
+h1::after{
+    content:"Analiza tus datos de Excel de forma rápida, visual y profesional.";
+    display:block;
+    font-size:18px;
+    font-weight:400;
+    color:var(--dash-muted);
+    letter-spacing:0;
+    margin-top:8px;
+}
+
+.buscadores-box{
+    justify-content:flex-start !important;
+    background:var(--dash-panel);
+    border:1px solid var(--dash-border);
+    border-radius:22px;
+    padding:18px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.28);
+}
+
+input[type="text"],
+select{
+    background:rgba(255,255,255,0.05) !important;
+    border:1px solid rgba(255,255,255,0.12) !important;
+    color:white !important;
+}
+
+body.modo-claro input[type="text"],
+body.modo-claro select{
+    background:white !important;
+    color:#111 !important;
+}
+
+.resumen-grid{
+    grid-template-columns:repeat(4,minmax(220px,1fr)) !important;
+    gap:22px !important;
+}
+
+.resumen-card{
+    background:linear-gradient(145deg,rgba(12,34,26,0.95),rgba(3,12,9,0.95)) !important;
+    border:1px solid var(--dash-border) !important;
+    border-radius:22px !important;
+    padding:26px !important;
+    position:relative;
+    overflow:hidden;
+}
+
+.resumen-card::before{
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    right:-20px;
+    top:-20px;
+    border-radius:50%;
+    background:rgba(0,255,136,0.12);
+}
+
+.resumen-card h3{
+    color:white !important;
+}
+
+.resumen-card p{
+    color:var(--dash-muted) !important;
+}
+
+.selector-box,
+.archivos-box,
+.archivo-seccion,
+.card-grafica{
+    background:var(--dash-panel) !important;
+    border:1px solid var(--dash-border) !important;
+    box-shadow:0 15px 45px rgba(0,0,0,0.28) !important;
+    border-radius:24px !important;
+}
+
+.selector-box{
+    padding:18px;
+    text-align:left !important;
+}
+
+.archivos-box h3{
+    color:white;
+    font-weight:800;
+}
+
+.archivos-tabla,
+table{
+    border-collapse:separate !important;
+    border-spacing:0 !important;
+}
+
+.archivos-tabla th,
+th{
+    background:linear-gradient(135deg,#008f50,#00c86f) !important;
+    color:white !important;
+}
+
+.archivos-tabla td,
+td{
+    background:rgba(255,255,255,0.04) !important;
+    border-color:rgba(255,255,255,0.08) !important;
+}
+
+.archivos-tabla tr:hover td,
+tbody tr:hover td{
+    background:rgba(0,255,136,0.08) !important;
+}
+
+#contenedorArchivos{
+    gap:28px !important;
+}
+
+.archivo-seccion{
+    min-width:1080px !important;
+}
+
+.archivo-seccion h2{
+    color:white;
+    font-weight:900;
+    margin-bottom:22px;
+}
+
+.card-grafica{
+    overflow:hidden !important;
+}
+
+.card-grafica canvas{
+    background:linear-gradient(145deg,#06130e,#020806) !important;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.ia-box{
+    background:rgba(0,255,136,0.08) !important;
+    border-left:6px solid var(--dash-green-2) !important;
+    color:white;
+}
+
+body.modo-claro{
+    background:#f4f7f6 !important;
+    color:#111 !important;
+}
+
+body.modo-claro::before{
+    background:linear-gradient(180deg,#ffffff,#e8fff3);
+}
+
+body.modo-claro .dashboard-topbar,
+body.modo-claro .dashboard-side{
+    background:rgba(255,255,255,0.86);
+}
+
+body.modo-claro .side-brand h2,
+body.modo-claro .top-title strong,
+body.modo-claro h1,
+body.modo-claro .archivo-seccion h2,
+body.modo-claro .archivos-box h3{
+    color:#111 !important;
+}
+
+body.modo-claro .resumen-card,
+body.modo-claro .selector-box,
+body.modo-claro .archivos-box,
+body.modo-claro .archivo-seccion,
+body.modo-claro .card-grafica,
+body.modo-claro .buscadores-box{
+    background:white !important;
+    color:#111 !important;
+}
+
+body.modo-claro .ia-box{
+    background:#e8fff3 !important;
+    color:#111 !important;
+}
+
+body.modo-claro td{
+    background:#f8faf9 !important;
+    color:#111 !important;
+}
+
+@media(max-width:1000px){
+    body::before,
+    .dashboard-side{
+        display:none;
+    }
+
+    .dashboard-topbar{
+        left:0;
+        height:auto;
+        min-height:86px;
+        flex-wrap:wrap;
+        gap:12px;
+        padding:14px;
+    }
+
+    .container-fluid{
+        padding:125px 18px 24px 18px !important;
+    }
+
+    .resumen-grid{
+        grid-template-columns:1fr !important;
+    }
+}
+
+
+
+/* ========================= */
+/* MEJORA PREMIUM MODO CLARO + ICONOS GRANDES */
+/* ========================= */
+
+.resumen-premium-card{
+    display:flex !important;
+    align-items:center !important;
+    gap:20px !important;
+    min-height:145px;
+    padding:28px !important;
+    position:relative;
+    overflow:hidden;
+}
+
+.resumen-premium-card::after{
+    content:"";
+    position:absolute;
+    right:-35px;
+    bottom:-35px;
+    width:125px;
+    height:125px;
+    border-radius:50%;
+    background:rgba(0,255,136,0.10);
+    pointer-events:none;
+}
+
+.resumen-icon{
+    width:82px;
+    height:82px;
+    min-width:82px;
+    border-radius:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:48px;
+    line-height:1;
+    background:linear-gradient(135deg,rgba(0,255,136,0.95),rgba(0,145,82,0.95));
+    box-shadow:0 0 28px rgba(0,255,136,0.25), inset 0 0 18px rgba(255,255,255,0.18);
+    border:1px solid rgba(255,255,255,0.22);
+}
+
+.resumen-info{
+    position:relative;
+    z-index:2;
+}
+
+.resumen-info p{
+    margin:0 0 6px 0 !important;
+    font-size:17px !important;
+    font-weight:800 !important;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+}
+
+.resumen-info h3{
+    font-size:52px !important;
+    line-height:1 !important;
+    margin:0 !important;
+}
+
+.card-archivos .resumen-icon{background:linear-gradient(135deg,#00ff88,#009b5a);}
+.card-hojas .resumen-icon{background:linear-gradient(135deg,#4fd1ff,#0077b6);}
+.card-registros .resumen-icon{background:linear-gradient(135deg,#ffd166,#ff9f1c);}
+.card-promedio .resumen-icon{background:linear-gradient(135deg,#f7ff6b,#c8a600);}
+
+.side-logo,
+.side-menu a,
+.side-bottom,
+.top-btn,
+.btn-custom,
+.archivos-box h3,
+.archivo-seccion h2,
+.card-grafica h4{
+    letter-spacing:0.2px;
+}
+
+.side-logo{
+    font-size:38px !important;
+    width:64px !important;
+    height:64px !important;
+    border-radius:22px !important;
+}
+
+.side-menu a{
+    font-size:18px !important;
+}
+
+.side-bottom{
+    font-size:18px !important;
+}
+
+.top-btn,
+.btn-custom{
+    font-size:18px !important;
+}
+
+body.modo-claro{
+    background:
+        radial-gradient(circle at 12% 12%, rgba(0,200,111,0.13), transparent 30%),
+        radial-gradient(circle at 92% 18%, rgba(0,119,182,0.10), transparent 26%),
+        linear-gradient(135deg,#f7fbf9,#edf6f1 55%,#ffffff) !important;
+}
+
+body.modo-claro::before{
+    background:
+        linear-gradient(180deg,#ffffff,#ecfff5),
+        radial-gradient(circle at 35% 18%, rgba(0,200,111,0.16), transparent 38%);
+    box-shadow:8px 0 35px rgba(0,80,45,0.08);
+}
+
+body.modo-claro .dashboard-topbar{
+    background:rgba(255,255,255,0.88) !important;
+    border-bottom:1px solid rgba(0,120,70,0.16) !important;
+    box-shadow:0 12px 35px rgba(0,60,40,0.08);
+}
+
+body.modo-claro .dashboard-side{
+    background:rgba(255,255,255,0.78) !important;
+}
+
+body.modo-claro .top-btn,
+body.modo-claro .btn-custom,
+body.modo-claro .btn-regresar{
+    background:#ffffff !important;
+    color:#063b27 !important;
+    border:1px solid rgba(0,150,85,0.22) !important;
+    box-shadow:0 8px 22px rgba(0,80,45,0.10) !important;
+}
+
+body.modo-claro .top-btn:hover,
+body.modo-claro .btn-custom:hover,
+body.modo-claro .btn-regresar:hover{
+    color:white !important;
+    background:linear-gradient(135deg,#00b96b,#007f47) !important;
+    box-shadow:0 12px 28px rgba(0,150,85,0.20) !important;
+}
+
+body.modo-claro .resumen-premium-card{
+    background:linear-gradient(145deg,#ffffff,#f4fbf7) !important;
+    border:1px solid rgba(0,160,90,0.20) !important;
+    box-shadow:0 18px 40px rgba(0,65,40,0.10) !important;
+}
+
+body.modo-claro .resumen-premium-card:hover{
+    transform:translateY(-7px) scale(1.01) !important;
+    box-shadow:0 22px 50px rgba(0,120,70,0.17) !important;
+}
+
+body.modo-claro .resumen-premium-card::after{
+    background:rgba(0,180,95,0.10);
+}
+
+body.modo-claro .resumen-icon{
+    box-shadow:0 13px 28px rgba(0,120,70,0.20), inset 0 0 15px rgba(255,255,255,0.30);
+}
+
+body.modo-claro .resumen-info p{
+    color:#00643b !important;
+}
+
+body.modo-claro .resumen-info h3{
+    color:#10251b !important;
+}
+
+body.modo-claro .selector-box,
+body.modo-claro .archivos-box,
+body.modo-claro .archivo-seccion,
+body.modo-claro .card-grafica,
+body.modo-claro .buscadores-box{
+    background:rgba(255,255,255,0.92) !important;
+    border:1px solid rgba(0,140,80,0.18) !important;
+    box-shadow:0 20px 45px rgba(0,60,40,0.09) !important;
+}
+
+body.modo-claro .side-menu a{
+    color:#173b2b !important;
+}
+
+body.modo-claro .side-menu a:hover,
+body.modo-claro .side-menu a.active{
+    color:white !important;
+}
+
+body.modo-claro .side-bottom{
+    background:#ffffff !important;
+    color:#00643b !important;
+    border:1px solid rgba(0,140,80,0.18) !important;
+    box-shadow:0 10px 25px rgba(0,80,45,0.08);
+}
+
+body.modo-claro .card-grafica h4,
+body.modo-claro .archivo-seccion h2,
+body.modo-claro .archivos-box h3{
+    color:#0b2f20 !important;
+}
+
+body.modo-claro h1::after,
+body.modo-claro .top-title span,
+body.modo-claro .side-brand p{
+    color:#517263 !important;
+}
+
+body.modo-claro canvas{
+    background:linear-gradient(145deg,#ffffff,#eef8f3) !important;
+    border:1px solid rgba(0,140,80,0.12) !important;
+}
+
+@media(max-width:900px){
+    .resumen-premium-card{
+        min-height:120px;
+    }
+    .resumen-icon{
+        width:68px;
+        height:68px;
+        min-width:68px;
+        font-size:40px;
+    }
+    .resumen-info h3{
+        font-size:42px !important;
+    }
+}
+
+
+
+/* ========================= */
+/* FONDO DINÁMICO GLOBAL */
+/* ========================= */
+
+body{
+
+    background:
+        radial-gradient(circle at 20% 20%,
+        rgba(0,255,153,0.16),
+        transparent 30%),
+
+        radial-gradient(circle at 80% 30%,
+        rgba(0,170,255,0.14),
+        transparent 30%),
+
+        radial-gradient(circle at 50% 90%,
+        rgba(255,230,109,0.10),
+        transparent 30%),
+
+        linear-gradient(
+            135deg,
+            #020816,
+            #071b11,
+            #020816
+        ) !important;
+
+    background-size:cover;
+
+    animation:fondoDashboard 14s ease-in-out infinite alternate;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+
+}
+
+@keyframes fondoDashboard{
+
+    0%{
+        filter:hue-rotate(0deg);
+    }
+
+    100%{
+        filter:hue-rotate(18deg);
+    }
+
+}
+
+body::before{
+    display:none !important;
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:-1;
+
+    background:
+
+        radial-gradient(circle at 15% 20%,
+        rgba(0,255,153,0.12),
+        transparent 25%),
+
+        radial-gradient(circle at 85% 25%,
+        rgba(0,170,255,0.12),
+        transparent 25%),
+
+        radial-gradient(circle at 50% 80%,
+        rgba(255,255,255,0.05),
+        transparent 25%);
+
+    animation:fondoGlow 10s ease-in-out infinite alternate;
+
+}
+
+@keyframes fondoGlow{
+
+    from{
+        transform:translateY(0px);
+    }
+
+    to{
+        transform:translateY(-12px);
+    }
+
+}
+
+body.modo-claro{
+
+    background:
+        linear-gradient(
+            145deg,
+            #eef8ff,
+            #dff4ff,
+            #c9ecff
+        ) !important;
+
+}
+
+
+/* ========================= */
+/* MENÚ RÁPIDO TIPO INDEX */
+/* ========================= */
+
+.menu-rapido-wrapper{
+    position:relative;
+    z-index:10050;
+}
+
+.menu-rapido-toggle{
+    width:58px;
+    height:48px;
+    background:rgba(10,15,25,0.82);
+    border:1px solid rgba(0,170,255,0.35);
+    border-radius:18px;
+    cursor:pointer;
+    position:relative;
+    box-shadow:0 0 22px rgba(0,170,255,0.22);
+    backdrop-filter:blur(14px);
+    transition:0.3s;
+}
+
+.menu-rapido-toggle:hover{
+    transform:scale(1.07);
+    box-shadow:0 0 30px rgba(0,170,255,0.55);
+}
+
+.menu-rapido-dot{
+    position:absolute;
+    top:8px;
+    left:28px;
+    width:12px;
+    height:12px;
+    background:#0d8bff;
+    border-radius:50%;
+    box-shadow:0 0 14px rgba(13,139,255,0.95);
+    animation:pulsoMenuRapido 1.6s infinite ease-in-out;
+}
+
+.menu-rapido-linea{
+    position:absolute;
+    left:13px;
+    width:26px;
+    height:4px;
+    background:white;
+    border-radius:999px;
+    box-shadow:0 0 10px rgba(255,255,255,0.55);
+    transition:0.25s;
+}
+
+.menu-rapido-linea.uno{
+    bottom:17px;
+}
+
+.menu-rapido-linea.dos{
+    bottom:9px;
+    width:18px;
+}
+
+.menu-rapido-toggle.activo .menu-rapido-linea.uno{
+    transform:rotate(42deg);
+    bottom:14px;
+    left:16px;
+}
+
+.menu-rapido-toggle.activo .menu-rapido-linea.dos{
+    width:26px;
+    transform:rotate(-42deg);
+    bottom:14px;
+    left:16px;
+}
+
+@keyframes pulsoMenuRapido{
+    0%,100%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    50%{
+        transform:scale(1.28);
+        opacity:0.75;
+    }
+}
+
+.menu-rapido-panel{
+    position:absolute;
+    top:64px;
+    right:0;
+    width:310px;
+    background:rgba(12,16,28,0.94);
+    border:1px solid rgba(0,170,255,0.28);
+    border-radius:22px;
+    padding:14px;
+    display:none;
+    box-shadow:
+        0 18px 45px rgba(0,0,0,0.45),
+        0 0 35px rgba(0,170,255,0.28);
+    backdrop-filter:blur(18px);
+    animation:menuRapidoEntrada 0.28s ease;
+}
+
+.menu-rapido-panel.activo{
+    display:block;
+}
+
+@keyframes menuRapidoEntrada{
+    from{
+        opacity:0;
+        transform:translateY(-10px) scale(0.96);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+.menu-rapido-header{
+    padding:10px 12px 14px;
+    margin-bottom:8px;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+}
+
+.menu-rapido-header strong{
+    color:white;
+    display:block;
+    font-size:16px;
+}
+
+.menu-rapido-header span{
+    color:#b9c7d8;
+    font-size:12px;
+}
+
+.menu-rapido-panel a,
+.menu-rapido-panel button,
+.menu-rapido-panel label{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 14px;
+    margin-bottom:8px;
+    border-radius:15px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.045);
+    color:white !important;
+    text-decoration:none;
+    font-weight:800;
+    font-size:14px;
+    cursor:pointer;
+    transition:0.25s;
+    text-align:left;
+}
+
+.menu-rapido-panel a:hover,
+.menu-rapido-panel button:hover,
+.menu-rapido-panel label:hover{
+    background:linear-gradient(135deg,#0d8bff,#00c6ff);
+    color:#111 !important;
+    transform:translateX(4px);
+    box-shadow:0 0 22px rgba(13,139,255,0.35);
+}
+
+.menu-rapido-status{
+    margin-top:10px;
+    padding:12px;
+    border-radius:15px;
+    background:rgba(0,170,255,0.10);
+    border:1px solid rgba(0,170,255,0.18);
+    color:white;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.menu-rapido-status span{
+    color:white !important;
+    font-weight:900;
+}
+
+body.modo-claro .menu-rapido-toggle{
+    background:#ffffff;
+    border:1px solid rgba(13,139,255,0.25);
+    box-shadow:0 8px 25px rgba(13,139,255,0.18);
+}
+
+body.modo-claro .menu-rapido-linea{
+    background:#111;
+    box-shadow:none;
+}
+
+body.modo-claro .menu-rapido-panel{
+    background:rgba(255,255,255,0.96);
+    color:#111;
+    border:1px solid rgba(13,139,255,0.20);
+    box-shadow:
+        0 18px 45px rgba(0,0,0,0.16),
+        0 0 24px rgba(13,139,255,0.14);
+}
+
+body.modo-claro .menu-rapido-header strong,
+body.modo-claro .menu-rapido-panel a,
+body.modo-claro .menu-rapido-panel button,
+body.modo-claro .menu-rapido-panel label,
+body.modo-claro .menu-rapido-status,
+body.modo-claro .menu-rapido-status span{
+    color:#111 !important;
+}
+
+body.modo-claro .menu-rapido-header span{
+    color:#52606d !important;
+}
+
+body.modo-claro .menu-rapido-panel a,
+body.modo-claro .menu-rapido-panel button,
+body.modo-claro .menu-rapido-panel label{
+    background:#f3f7fb;
+    border:1px solid rgba(0,0,0,0.08);
+}
+
+body.modo-claro .menu-rapido-panel a:hover,
+body.modo-claro .menu-rapido-panel button:hover,
+body.modo-claro .menu-rapido-panel label:hover{
+    color:white !important;
+}
+
+body.modo-claro .menu-rapido-status{
+    background:#eef7ff;
+}
+
+
+/* ========================= */
+/* MENÚ RÁPIDO MOVIBLE */
+/* ========================= */
+
+.menu-rapido-wrapper{
+    position:fixed !important;
+    top:18px;
+    right:24px;
+    z-index:99999 !important;
+    cursor:grab;
+    user-select:none;
+}
+
+.menu-rapido-wrapper.arrastrando{
+    cursor:grabbing;
+}
+
+.menu-rapido-toggle{
+    touch-action:none;
+}
+
+
+/* ========================= */
+/* CORRECCIÓN MENÚ RÁPIDO FIJO */
+/* ========================= */
+
+.menu-rapido-wrapper{
+    position:fixed !important;
+    top:18px !important;
+    right:24px !important;
+    left:auto !important;
+    z-index:999999 !important;
+    cursor:pointer !important;
+    user-select:none;
+}
+
+/* El menú baja contigo porque está fijo en la pantalla */
+.menu-rapido-panel{
+    right:0 !important;
+}
+
+/* Corrección modo claro: texto visible */
+body.modo-claro .menu-rapido-panel{
+    background:#ffffff !important;
+    color:#111 !important;
+    border:1px solid rgba(13,139,255,0.25) !important;
+}
+
+body.modo-claro .menu-rapido-header strong,
+body.modo-claro .menu-rapido-header span,
+body.modo-claro .menu-rapido-panel a,
+body.modo-claro .menu-rapido-panel button,
+body.modo-claro .menu-rapido-panel label,
+body.modo-claro .menu-rapido-status,
+body.modo-claro .menu-rapido-status span{
+    color:#111 !important;
+}
+
+body.modo-claro .menu-rapido-panel a,
+body.modo-claro .menu-rapido-panel button,
+body.modo-claro .menu-rapido-panel label{
+    background:#f3f8ff !important;
+    border:1px solid rgba(13,139,255,0.18) !important;
+}
+
+body.modo-claro .menu-rapido-panel a:hover,
+body.modo-claro .menu-rapido-panel button:hover,
+body.modo-claro .menu-rapido-panel label:hover{
+    background:linear-gradient(135deg,#0d8bff,#00c6ff) !important;
+    color:white !important;
+}
+
+body.modo-claro .menu-rapido-status{
+    background:#eef7ff !important;
+    border:1px solid rgba(13,139,255,0.18) !important;
+}
+
+/* Botón del menú visible en modo claro */
+body.modo-claro .menu-rapido-toggle{
+    background:white !important;
+    border:1px solid rgba(13,139,255,0.30) !important;
+    box-shadow:0 8px 25px rgba(13,139,255,0.18) !important;
+}
+
+body.modo-claro .menu-rapido-linea{
+    background:#111 !important;
+}
+
+body.modo-claro .menu-rapido-dot{
+    background:#0d8bff !important;
+}
+
+
+
+
+
+/* ========================= */
+/* AJUSTE LIMPIO MODO CLARO */
+/* ========================= */
+
+body.modo-claro .buscadores-box,
+body.modo-claro .selector-box,
+body.modo-claro .archivos-box,
+body.modo-claro .archivo-seccion,
+body.modo-claro .card-grafica{
+
+    border:1px solid rgba(0,0,0,0.12) !important;
+
+}
+
+body.modo-claro input[type="text"],
+body.modo-claro select{
+
+    border:1px solid rgba(0,0,0,0.18) !important;
+    box-shadow:none !important;
+
+}
+
+body.modo-claro input[type="text"]:focus,
+body.modo-claro select:focus{
+
+    border:1px solid rgba(0,0,0,0.28) !important;
+    box-shadow:0 0 12px rgba(0,0,0,0.10) !important;
+
+}
+
+/* ========================= */
+/* FIX MENÚ RÁPIDO */
+/* ========================= */
+
+.menu-rapido-wrapper{
+
+    position:fixed !important;
+    top:18px !important;
+    right:24px !important;
+    z-index:999999 !important;
+
+}
+
+.menu-rapido-toggle{
+
+    width:58px;
+    height:48px;
+    border-radius:18px;
+    border:none;
+    background:linear-gradient(135deg,#0d8bff,#00c6ff);
+    box-shadow:0 0 24px rgba(0,170,255,0.35);
+    transition:0.3s;
+
+}
+
+.menu-rapido-toggle:hover{
+
+    transform:scale(1.06);
+
+}
+
+.menu-rapido-panel{
+
+    position:absolute;
+    top:64px;
+    right:0;
+    width:310px;
+    border-radius:22px;
+    overflow:hidden;
+
+}
+
+body.modo-claro .menu-rapido-panel{
+
+    background:white !important;
+    border:1px solid rgba(0,0,0,0.08) !important;
+
+}
+
+body.modo-claro .menu-rapido-panel a,
+body.modo-claro .menu-rapido-panel button,
+body.modo-claro .menu-rapido-panel label{
+
+    color:#111 !important;
+    background:#f4f7fb !important;
+
+}
+
+body.modo-claro .menu-rapido-panel a:hover,
+body.modo-claro .menu-rapido-panel button:hover,
+body.modo-claro .menu-rapido-panel label:hover{
+
+    background:linear-gradient(135deg,#0d8bff,#00c6ff) !important;
+    color:white !important;
+
+}
+
+
+/* ========================= */
+/* MENÚ RÁPIDO SIEMPRE VISIBLE */
+/* ========================= */
+
+.menu-rapido-wrapper{
+    position:fixed !important;
+    top:18px !important;
+    right:24px !important;
+    left:auto !important;
+    bottom:auto !important;
+    z-index:2147483647 !important;
+    transform:none !important;
+}
+
+.menu-rapido-panel{
+    position:absolute !important;
+    top:64px !important;
+    right:0 !important;
+    left:auto !important;
+    z-index:2147483647 !important;
+}
+
+.dashboard-topbar{
+    overflow:visible !important;
+}
+
+.top-actions{
+    overflow:visible !important;
+}
+
+
+/* ========================= */
+/* REPORTE GERENCIAL Y EXPORTACIONES */
+/* ========================= */
+
+.dashboard-gerencial-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(220px,1fr));
+    gap:20px;
+    margin:28px 0;
+}
+
+.gerencial-card{
+    background:linear-gradient(145deg,rgba(12,34,26,0.96),rgba(3,12,9,0.96));
+    border:1px solid var(--dash-border);
+    border-radius:22px;
+    padding:22px;
+    box-shadow:0 15px 45px rgba(0,0,0,0.28);
+    position:relative;
+    overflow:hidden;
+    min-height:135px;
+}
+
+.gerencial-card::after{
+    content:"";
+    position:absolute;
+    right:-35px;
+    bottom:-35px;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:rgba(0,255,136,0.10);
+}
+
+.gerencial-card span{
+    display:block;
+    color:var(--dash-muted);
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:0.7px;
+    font-size:14px;
+    margin-bottom:10px;
+    position:relative;
+    z-index:2;
+}
+
+.gerencial-card h3{
+    color:white;
+    font-size:30px;
+    font-weight:900;
+    margin:0;
+    position:relative;
+    z-index:2;
+}
+
+.gerencial-card p{
+    color:#d6f5e4;
+    margin:8px 0 0;
+    font-weight:700;
+    position:relative;
+    z-index:2;
+}
+
+.resumen-ejecutivo-box{
+    background:rgba(0,255,136,0.08);
+    border:1px solid var(--dash-border);
+    border-left:7px solid var(--dash-green-2);
+    border-radius:22px;
+    padding:24px;
+    margin:25px 0 30px;
+    color:white;
+    box-shadow:0 15px 45px rgba(0,0,0,0.25);
+}
+
+.resumen-ejecutivo-box h3{
+    font-weight:900;
+    margin-bottom:12px;
+    color:white;
+}
+
+.resumen-ejecutivo-box p{
+    font-size:17px;
+    line-height:1.7;
+    color:#eafff2;
+    margin:0;
+}
+
+.exportaciones-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(220px,1fr));
+    gap:16px;
+    margin:22px 0 30px;
+}
+
+.exportacion-btn{
+    min-height:76px;
+    border:none;
+    border-radius:18px;
+    padding:16px;
+    font-weight:900;
+    color:white !important;
+    background:linear-gradient(135deg,#00c86f,#007f47);
+    box-shadow:0 12px 28px rgba(0,255,136,0.18);
+    transition:0.25s ease;
+}
+
+.exportacion-btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 36px rgba(0,255,136,0.25);
+}
+
+body.modo-claro .gerencial-card,
+body.modo-claro .resumen-ejecutivo-box{
+    background:white !important;
+    color:#111 !important;
+    border:1px solid rgba(0,140,80,0.18) !important;
+    box-shadow:0 20px 45px rgba(0,60,40,0.09) !important;
+}
+
+body.modo-claro .gerencial-card h3,
+body.modo-claro .resumen-ejecutivo-box h3{
+    color:#10251b !important;
+}
+
+body.modo-claro .gerencial-card span,
+body.modo-claro .gerencial-card p,
+body.modo-claro .resumen-ejecutivo-box p{
+    color:#173b2b !important;
+}
+
+@media(max-width:1000px){
+    .dashboard-gerencial-grid,
+    .exportaciones-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+
+
+/* =====================================================
+   AJUSTE FINAL SOLICITADO - TEMA OSCURO COMO CAPTURA
+   Cambia colores + quita burbujas sin reducir archivo
+   ===================================================== */
+
+:root{
+    --go-fondo-1:#01060d;
+    --go-fondo-2:#031511;
+    --go-fondo-3:#000000;
+    --go-panel:rgba(3,18,17,0.88);
+    --go-panel-2:rgba(0,35,31,0.70);
+    --go-borde:rgba(0,255,153,0.20);
+    --go-borde-suave:rgba(255,255,255,0.09);
+    --go-verde:#00a896;
+    --go-verde-brillante:#00ff99;
+    --go-azul-suave:#0d8bff;
+    --go-texto:#ffffff;
+    --go-muted:#d8e7e2;
+}
+
+body:not(.modo-claro){
+    background:
+        radial-gradient(circle at 18% 18%, rgba(0,168,150,0.22), transparent 34%),
+        radial-gradient(circle at 86% 24%, rgba(13,139,255,0.11), transparent 32%),
+        linear-gradient(135deg, var(--go-fondo-1), var(--go-fondo-2), var(--go-fondo-3)) !important;
+    color:var(--go-texto) !important;
+    animation:none !important;
+}
+
+body:not(.modo-claro) .dashboard-topbar{
+    background:rgba(2,8,12,0.78) !important;
+    border-bottom:1px solid rgba(255,255,255,0.08) !important;
+    box-shadow:none !important;
+    backdrop-filter:blur(18px) !important;
+}
+
+body:not(.modo-claro) .buscadores-box,
+body:not(.modo-claro) .selector-box,
+body:not(.modo-claro) .archivos-box,
+body:not(.modo-claro) .archivo-seccion,
+body:not(.modo-claro) .card-grafica,
+body:not(.modo-claro) .resumen-card,
+body:not(.modo-claro) .gerencial-card,
+body:not(.modo-claro) .resumen-ejecutivo-box{
+    background:var(--go-panel) !important;
+    border:1px solid var(--go-borde) !important;
+    box-shadow:0 18px 42px rgba(0,0,0,0.35) !important;
+    color:var(--go-texto) !important;
+}
+
+/* Quita las burbujas/círculos de todas las tarjetas */
+.resumen-card::before,
+.resumen-premium-card::after,
+.gerencial-card::after{
+    display:none !important;
+    content:none !important;
+    opacity:0 !important;
+    visibility:hidden !important;
+}
+
+body:not(.modo-claro) .resumen-premium-card,
+body:not(.modo-claro) .gerencial-card{
+    background:linear-gradient(145deg, rgba(0,37,32,0.82), rgba(1,13,15,0.92)) !important;
+    border:1px solid var(--go-borde) !important;
+    border-bottom:2px solid var(--go-verde) !important;
+    overflow:hidden !important;
+}
+
+body:not(.modo-claro) .card-archivos,
+body:not(.modo-claro) .card-hojas,
+body:not(.modo-claro) .card-registros,
+body:not(.modo-claro) .card-promedio{
+    border-bottom-color:var(--go-verde) !important;
+}
+
+body:not(.modo-claro) .resumen-icon{
+    border:none !important;
+    box-shadow:0 0 24px rgba(0,255,153,0.22) !important;
+}
+
+body:not(.modo-claro) .card-archivos .resumen-icon,
+body:not(.modo-claro) .card-hojas .resumen-icon,
+body:not(.modo-claro) .card-registros .resumen-icon,
+body:not(.modo-claro) .card-promedio .resumen-icon{
+    background:linear-gradient(135deg, #00ff99, #00a896) !important;
+}
+
+body:not(.modo-claro) h1,
+body:not(.modo-claro) .top-title strong,
+body:not(.modo-claro) .archivos-box h3,
+body:not(.modo-claro) .archivo-seccion h2,
+body:not(.modo-claro) .card-grafica h4,
+body:not(.modo-claro) .resumen-info h3,
+body:not(.modo-claro) .gerencial-card h3,
+body:not(.modo-claro) .resumen-ejecutivo-box h3{
+    color:#ffffff !important;
+}
+
+body:not(.modo-claro) h1::after,
+body:not(.modo-claro) .top-title span,
+body:not(.modo-claro) .resumen-info p,
+body:not(.modo-claro) .gerencial-card span,
+body:not(.modo-claro) .gerencial-card p,
+body:not(.modo-claro) .resumen-ejecutivo-box p{
+    color:var(--go-muted) !important;
+}
+
+body:not(.modo-claro) .btn-custom,
+body:not(.modo-claro) .btn-regresar,
+body:not(.modo-claro) .top-btn,
+body:not(.modo-claro) .exportacion-btn{
+    background:linear-gradient(135deg, var(--go-verde), #009e8f) !important;
+    color:white !important;
+    border:1px solid rgba(255,255,255,0.08) !important;
+    box-shadow:0 10px 25px rgba(0,168,150,0.24) !important;
+}
+
+body:not(.modo-claro) .btn-custom:hover,
+body:not(.modo-claro) .btn-regresar:hover,
+body:not(.modo-claro) .top-btn:hover,
+body:not(.modo-claro) .exportacion-btn:hover{
+    background:linear-gradient(135deg, var(--go-verde-brillante), var(--go-verde)) !important;
+    color:#00110d !important;
+    box-shadow:0 0 28px rgba(0,255,153,0.30) !important;
+}
+
+/* Select tipo de gráfica visible en oscuro */
+body:not(.modo-claro) input[type="text"],
+body:not(.modo-claro) select,
+body:not(.modo-claro) #tipoGrafica{
+    background:#061018 !important;
+    color:#ffffff !important;
+    border:1px solid rgba(255,255,255,0.18) !important;
+    border-radius:14px !important;
+}
+
+body:not(.modo-claro) select option,
+body:not(.modo-claro) #tipoGrafica option{
+    background:#061018 !important;
+    color:#ffffff !important;
+}
+
+body:not(.modo-claro) .selector-box label{
+    color:#ffffff !important;
+}
+
+body:not(.modo-claro) th,
+body:not(.modo-claro) .archivos-tabla th{
+    background:linear-gradient(135deg, var(--go-verde), #008577) !important;
+    color:white !important;
+}
+
+body:not(.modo-claro) td,
+body:not(.modo-claro) .archivos-tabla td{
+    background:rgba(255,255,255,0.04) !important;
+    color:white !important;
+    border-color:rgba(255,255,255,0.08) !important;
+}
+
+body:not(.modo-claro) tbody tr:hover td,
+body:not(.modo-claro) .archivos-tabla tr:hover td{
+    background:rgba(0,255,153,0.10) !important;
+}
+
+body:not(.modo-claro) .card-grafica canvas,
+body:not(.modo-claro) canvas{
+    background:linear-gradient(145deg, #061018, #020816) !important;
+    border:1px solid rgba(255,255,255,0.08) !important;
+}
+
+body:not(.modo-claro) .ia-box{
+    background:rgba(0,168,150,0.12) !important;
+    border-left:6px solid var(--go-verde) !important;
+    color:white !important;
+}
+
+body:not(.modo-claro) .menu-rapido-toggle{
+    background:rgba(10,15,25,0.82) !important;
+    border:1px solid rgba(0,168,150,0.38) !important;
+    box-shadow:0 0 22px rgba(0,168,150,0.24) !important;
+}
+
+body:not(.modo-claro) .menu-rapido-dot{
+    background:var(--go-verde-brillante) !important;
+    box-shadow:0 0 14px rgba(0,255,153,0.95) !important;
+}
+
+body:not(.modo-claro) .menu-rapido-panel{
+    background:rgba(3,18,17,0.96) !important;
+    border:1px solid var(--go-borde) !important;
+}
+
+body:not(.modo-claro) .menu-rapido-panel a:hover,
+body:not(.modo-claro) .menu-rapido-panel button:hover,
+body:not(.modo-claro) .menu-rapido-panel label:hover{
+    background:linear-gradient(135deg, var(--go-verde), #009e8f) !important;
+    color:white !important;
+}
+
+body:not(.modo-claro) ::-webkit-scrollbar-thumb{
+    background:linear-gradient(135deg, var(--go-verde-brillante), var(--go-verde)) !important;
+}
+
+
+/* ===== FIX GRÁFICAS BORROSAS ===== */
+.card-grafica,
+.card-grafica canvas,
+canvas{
+    filter:none !important;
+    backdrop-filter:none !important;
+    transform:none !important;
+    image-rendering:auto !important;
+}
+
+.card-grafica:hover{
+    box-shadow:0 0 18px rgba(0,255,153,0.18) !important;
+    transform:none !important;
+}
+
+body{
+    animation:none !important;
+    filter:none !important;
+}
+
+</style>
+</head>
+
+<body>
+
+
+
+<header class="dashboard-topbar">
+    <div class="top-title">
+        <strong>Excel a Tablas y Gráficas</strong>
+        <span>Dashboard operativo con análisis automático</span>
+    </div>
+
+    <div class="top-actions">
+
+        <div class="menu-rapido-wrapper">
+
+            <button
+                type="button"
+                class="menu-rapido-toggle"
+                id="menuRapidoToggle"
+                onclick="toggleMenuRapido()"
+                aria-label="Abrir menú rápido">
+
+                <span class="menu-rapido-dot"></span>
+                <span class="menu-rapido-linea uno"></span>
+                <span class="menu-rapido-linea dos"></span>
+
+            </button>
+
+            <div class="menu-rapido-panel" id="menuRapidoPanel">
+
+                <div class="menu-rapido-header">
+                    <strong>⚡ Menú rápido</strong>
+                    <span>Excel Dashboard</span>
+                </div>
+
+                <a href="#resumenDashboard" onclick="cerrarMenuRapido()">📌 Resumen</a>
+                <a href="#contenedorArchivos" onclick="cerrarMenuRapido()">📊 Gráficas</a>
+                <a href="#listaArchivos" onclick="cerrarMenuRapido()">📂 Archivos</a>
+
+                <label for="excelFile" onclick="cerrarMenuRapido()">
+                    ⬆️ Cargar Excel
+                </label>
+
+                <button type="button" onclick="cambiarModo(); cerrarMenuRapido();">
+                    🌙 / ☀️ Cambiar tema
+                </button>
+
+                <button type="button" onclick="generarWord(); cerrarMenuRapido();">
+                    📄 Crear Word
+                </button>
+
+                <button type="button" onclick="generarPDFEjecutivo(); cerrarMenuRapido();">
+                    📑 PDF Ejecutivo
+                </button>
+
+                <button type="button" onclick="exportarExcelConsolidado(); cerrarMenuRapido();">
+                    📊 Excel Consolidado
+                </button>
+
+                <button type="button" onclick="eliminarTodo(); cerrarMenuRapido();">
+                    🗑 Eliminar todo
+                </button>
+
+                <a href="#" onclick="irAlInicio(); cerrarMenuRapido();">🏠 Inicio</a>
+
+                <div class="menu-rapido-status">
+                    📁 Archivos:
+                    <span id="menuTotalArchivos">0</span>
+                    <br>
+                    📌 Registros:
+                    <span id="menuTotalRegistros">0</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</header>
+
+<div class="container-fluid">
+
+<h1>Bienvenido 👋</h1>
+
+<div class="text-center mb-4">
+    <input 
+    type="file"
+    id="excelFile"
+    multiple
+    accept=".xlsx,.xls"
+    class="w-50">
+</div>
+
+<div class="progress mb-4" id="barraProgreso">
+    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="progreso" style="width:0%">
+        0%
+    </div>
+</div>
+
+<div class="buscadores-box mb-4">
+    <input
+    type="text"
+    id="buscador"
+    placeholder="🔍 Buscar persona: juan,maria,pedro"
+    onkeyup="buscarGlobal()">
+
+    <input
+    type="text"
+    id="buscadorExtra"
+    placeholder="🔎 Buscar dato, valor o columna"
+    onkeyup="buscarGlobal()">
+</div>
+
+<!-- Las acciones principales ahora están dentro del menú rápido -->
+
+<div id="resumenDashboard"></div>
+
+<div class="resumen-grid">
+    <div class="resumen-card resumen-premium-card card-archivos">
+        <div class="resumen-icon">📁</div>
+        <div class="resumen-info">
+            <p>Archivos cargados</p>
+            <h3 id="resumenArchivos">0</h3>
+        </div>
+    </div>
+
+    <div class="resumen-card resumen-premium-card card-hojas">
+        <div class="resumen-icon">📄</div>
+        <div class="resumen-info">
+            <p>Hojas detectadas</p>
+            <h3 id="resumenHojas">0</h3>
+        </div>
+    </div>
+
+    <div class="resumen-card resumen-premium-card card-registros">
+        <div class="resumen-icon">📌</div>
+        <div class="resumen-info">
+            <p>Registros totales</p>
+            <h3 id="resumenRegistros">0</h3>
+        </div>
+    </div>
+
+    <div class="resumen-card resumen-premium-card card-promedio">
+        <div class="resumen-icon">⭐</div>
+        <div class="resumen-info">
+            <p>Promedio general</p>
+            <h3 id="resumenPromedio">0</h3>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-gerencial-grid" id="dashboardGerencial">
+    <div class="gerencial-card">
+        <span>🏆 Mejor registro</span>
+        <h3 id="kpiMejorRegistro">Sin datos</h3>
+        <p id="kpiMejorDetalle">Carga un Excel para analizar.</p>
+    </div>
+
+    <div class="gerencial-card">
+        <span>⚠️ Peor registro</span>
+        <h3 id="kpiPeorRegistro">Sin datos</h3>
+        <p id="kpiPeorDetalle">Carga un Excel para analizar.</p>
+    </div>
+
+    <div class="gerencial-card">
+        <span>📈 Tendencia general</span>
+        <h3 id="kpiTendencia">Sin datos</h3>
+        <p id="kpiTendenciaDetalle">Esperando información.</p>
+    </div>
+
+    <div class="gerencial-card">
+        <span>🎯 Cumplimiento</span>
+        <h3 id="kpiCumplimiento">0%</h3>
+        <p>Registros con valor igual o mayor a 100.</p>
+    </div>
+</div>
+
+<div class="resumen-ejecutivo-box" id="resumenEjecutivoBox">
+    <h3>🤖 Resumen Ejecutivo Automático</h3>
+    <p id="resumenEjecutivoTexto">
+        Carga uno o varios archivos Excel para generar un resumen ejecutivo automático.
+    </p>
+</div>
+
+<div class="exportaciones-grid">
+    <button type="button" class="exportacion-btn" onclick="generarPDFEjecutivo()">
+        📑 Generar PDF Ejecutivo
+    </button>
+
+    <button type="button" class="exportacion-btn" onclick="exportarExcelConsolidado()">
+        📊 Exportar Excel Consolidado
+    </button>
+
+    <button type="button" class="exportacion-btn" onclick="generarWord()">
+        📄 Crear Word
+    </button>
+</div>
+
+<div class="selector-box">
+    <label for="tipoGrafica">Tipo de gráfica:</label>
+
+    <select id="tipoGrafica" onchange="renderizarTodo()">
+        <option value="bar">📊 Barras</option>
+        <option value="line">📈 Línea</option>
+        <option value="pie">🥧 Pastel</option>
+        <option value="doughnut">🍩 Dona</option>
+    </select>
+</div>
+
+<div class="archivos-box">
+    <h3 class="mb-4">📂 Archivos Cargados</h3>
+
+    <div class="archivos-scroll">
+        <table class="archivos-tabla">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Archivo</th>
+                    <th>Activo</th>
+                    <th>Cerrar</th>
+                </tr>
+            </thead>
+            <tbody id="listaArchivos"></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="contenedorArchivos"></div>
+
+</div>
+
+<script>
+
+function irAlInicio(){
+
+    const usuario =
+        sessionStorage.getItem("usuarioSesionActual") ||
+        localStorage.getItem("usuarioSesionActual") ||
+        localStorage.getItem("usuarioRecordadoSistema");
+
+    if(usuario){
+
+        sessionStorage.setItem(
+            "usuarioSesionActual",
+            usuario
+        );
+
+        localStorage.setItem(
+            "usuarioSesionActual",
+            usuario
+        );
+
+        localStorage.setItem(
+            "usuarioRecordadoSistema",
+            usuario
+        );
+
+    }
+
+    window.location.href = "index.html";
+
+}
+
+function obtenerUsuarioActivoSistema(){
+
+    return (
+        sessionStorage.getItem("usuarioSesionActual") ||
+        localStorage.getItem("usuarioSesionActual") ||
+        localStorage.getItem("usuarioRecordadoSistema") ||
+        ""
+    );
+
+}
+
+window.addEventListener("load", function(){
+    let usuario = obtenerUsuarioActivoSistema();
+    if(!usuario){
+        usuario = localStorage.getItem("usuarioSesionActual") || "";
+        if(usuario){
+            sessionStorage.setItem("usuarioSesionActual", usuario);
+        }
+    }
+});
+
+
+function toggleMenuRapido(){
+
+    const panel =
+        document.getElementById("menuRapidoPanel");
+
+    const boton =
+        document.getElementById("menuRapidoToggle");
+
+    if(panel){
+        panel.classList.toggle("activo");
+    }
+
+    if(boton){
+        boton.classList.toggle("activo");
+    }
+
+}
+
+function cerrarMenuRapido(){
+
+    const panel =
+        document.getElementById("menuRapidoPanel");
+
+    const boton =
+        document.getElementById("menuRapidoToggle");
+
+    if(panel){
+        panel.classList.remove("activo");
+    }
+
+    if(boton){
+        boton.classList.remove("activo");
+    }
+
+}
+
+document.addEventListener("click", function(event){
+
+    const menu =
+        document.querySelector(".menu-rapido-wrapper");
+
+    if(menu && !menu.contains(event.target)){
+        cerrarMenuRapido();
+    }
+
+});
+
+// ==========================================================
+// SUPABASE - ARCHIVOS EXCEL
+// ==========================================================
+
+async function cargarArchivosSupabase(usuario){
+
+    const { data, error } = await supabaseClient
+        .from("excel_archivos")
+        .select("*")
+        .eq("usuario", usuario)
+        .order("fecha_creacion", { ascending: true });
+
+    if(error){
+
+        console.error(error);
+        return [];
+
+    }
+
+    return data.map(registro => ({
+
+        id: registro.id,
+
+        usuario: registro.usuario,
+
+        nombre: registro.nombre_archivo,
+
+        data: registro.datos,
+
+        hojas: Array.isArray(registro.datos)
+            ? registro.datos.length
+            : 1
+
+    }));
+
+}
+
+async function guardarArchivoSupabase(archivo){
+
+    console.log("Archivo a guardar:", archivo);
+
+    const { data, error } = await supabaseClient
+        .from("excel_archivos")
+        .insert({
+
+            usuario: archivo.usuario,
+
+            nombre_archivo: archivo.nombre,
+
+            datos: archivo.data
+
+        })
+        .select();
+
+    console.log("Respuesta Supabase:", data);
+
+    if(error){
+        console.error("Error Supabase:", error);
+    }
+
+}
+
+async function eliminarArchivoSupabase(id){
+
+    const { error } = await supabaseClient
+        .from("excel_archivos")
+        .delete()
+        .eq("id", id);
+
+    if(error){
+
+        console.error(error);
+
+    }
+
+}
+
+let archivosGuardados = [];
+
+if(localStorage.getItem("modoPagina") === "claro"){
+    document.body.classList.add("modo-claro");
+}
+
+window.addEventListener("load", async () => {
+
+    const usuario = obtenerUsuarioActivoSistema();
+
+    if(!usuario){
+        return;
+    }
+
+    archivosGuardados = await cargarArchivosSupabase(usuario);
+
+    if(archivosGuardados.length > 0){
+        renderizarTodo();
+    }
+
+});
+
+document.getElementById("excelFile")
+.addEventListener("change", function(e){
+
+    let files = Array.from(e.target.files);
+
+    if(files.length === 0){
+        return;
+    }
+
+    let barra = document.getElementById("barraProgreso");
+    let progreso = document.getElementById("progreso");
+
+    barra.style.display = "block";
+    progreso.style.width = "0%";
+    progreso.innerText = "0%";
+
+    let cargados = 0;
+
+    files.forEach(file => {
+
+        let reader = new FileReader();
+
+        reader.onload = async function(ev){
+
+            let data = new Uint8Array(ev.target.result);
+let workbook = XLSX.read(data,{type:"array"});
+
+const hojas = {};
+
+workbook.SheetNames.forEach(nombreHoja=>{
+
+    hojas[nombreHoja]=XLSX.utils.sheet_to_json(
+
+        workbook.Sheets[nombreHoja],
+
+        {
+            header:1,
+            defval:""
+        }
+
+    );
+
+});
+
+const nuevoArchivo={
+
+    usuario:obtenerUsuarioActivoSistema(),
+
+    nombre:file.name,
+
+    hojas:workbook.SheetNames,
+
+    contenido:hojas
+
+};
+
+await guardarArchivoSupabase(nuevoArchivo);
+
+archivosGuardados = await cargarArchivosSupabase(
+    nuevoArchivo.usuario
+);
+
+cargados++;
+
+let porcentaje =
+Math.round((cargados / files.length) * 100);
+
+progreso.style.width = porcentaje + "%";
+progreso.innerText = porcentaje + "%";
+
+renderizarTodo();
+
+            let contenedor =
+            document.getElementById("contenedorArchivos");
+
+            setTimeout(()=>{
+                contenedor.scrollTo({
+                    left:0,
+                    behavior:"smooth"
+                });
+            },500);
+
+            if(cargados === files.length){
+                setTimeout(()=>{
+                    barra.style.display = "none";
+                },1000);
+            }
+
+        };
+
+        reader.readAsArrayBuffer(file);
+
+    });
+
+    e.target.value = "";
+
+});
+
+function cambiarModo(){
+
+    document.body.classList.toggle("modo-claro");
+
+    if(document.body.classList.contains("modo-claro")){
+        localStorage.setItem("modoPagina","claro");
+    }else{
+        localStorage.setItem("modoPagina","oscuro");
+    }
+
+    renderizarTodo();
+
+}
+
+function renderizarTodo(){
+
+    let contenedor =
+    document.getElementById("contenedorArchivos");
+
+    contenedor.innerHTML = "";
+
+    archivosGuardados.forEach((archivo,index)=>{
+        mostrarArchivo(
+            archivo.nombre,
+            archivo.data,
+            index
+        );
+    });
+
+    actualizarLista();
+    actualizarResumen();
+
+}
+
+function actualizarLista(){
+
+    let lista =
+    document.getElementById("listaArchivos");
+
+    lista.innerHTML = "";
+
+    archivosGuardados.forEach((archivo,index)=>{
+
+        lista.innerHTML += `
+        <tr>
+            <td>${index+1}</td>
+            <td>${archivo.nombre}</td>
+            <td>✅</td>
+            <td>
+                <button
+                class="btn btn-danger"
+                onclick="eliminarArchivo(${index})">
+                ❌
+                </button>
+            </td>
+        </tr>
+        `;
+
+    });
+
+}
+
+function actualizarResumen(){
+
+    let totalArchivos = archivosGuardados.length;
+    let totalHojas = 0;
+    let totalRegistros = 0;
+    let valoresNumericos = [];
+
+    archivosGuardados.forEach(archivo=>{
+
+        totalHojas += archivo.hojas || 1;
+
+        if(archivo.data && archivo.data.length > 1){
+            totalRegistros += archivo.data.length - 1;
+        }
+
+        if(archivo.data){
+
+            archivo.data.slice(1).forEach(fila=>{
+
+                fila.forEach(celda=>{
+
+                    let valor = parseFloat(celda);
+
+                    if(!isNaN(valor)){
+                        valoresNumericos.push(valor);
+                    }
+
+                });
+
+            });
+
+        }
+
+    });
+
+    let promedio =
+    valoresNumericos.length > 0
+    ? valoresNumericos.reduce((a,b)=>a+b,0) / valoresNumericos.length
+    : 0;
+
+    document.getElementById("resumenArchivos").innerText = totalArchivos;
+    document.getElementById("resumenHojas").innerText = totalHojas;
+    document.getElementById("resumenRegistros").innerText = totalRegistros;
+    document.getElementById("resumenPromedio").innerText = promedio.toFixed(2);
+
+    const menuTotalArchivos =
+        document.getElementById("menuTotalArchivos");
+
+    const menuTotalRegistros =
+        document.getElementById("menuTotalRegistros");
+
+    if(menuTotalArchivos){
+        menuTotalArchivos.innerText = totalArchivos;
+    }
+
+    if(menuTotalRegistros){
+        menuTotalRegistros.innerText = totalRegistros;
+    }
+
+    actualizarDashboardGerencial();
+
+}
+
+function ordenarDatos(data){
+
+    if(data.length <= 1){
+        return data;
+    }
+
+    let encabezado = data[0];
+    let filas = data.slice(1);
+
+    filas.sort((a,b)=>{
+
+        let nombreA = String(a[0] || "").toLowerCase();
+        let nombreB = String(b[0] || "").toLowerCase();
+
+        return nombreA.localeCompare(nombreB);
+
+    });
+
+    return [encabezado, ...filas];
+
+}
+
+function obtenerFiltros(id){
+
+    return document.getElementById(id)
+    .value
+    .toLowerCase()
+    .split(",")
+    .map(f=>f.trim())
+    .filter(f=>f !== "");
+
+}
+
+function mostrarArchivo(nombre,data,index){
+
+    data = ordenarDatos(data);
+
+    let contenedor =
+    document.getElementById("contenedorArchivos");
+
+    let seccion =
+    document.createElement("div");
+
+    seccion.className = "archivo-seccion";
+
+    let titulo =
+    document.createElement("h2");
+
+    titulo.innerHTML =
+    "📁 " + nombre;
+
+    seccion.appendChild(titulo);
+
+    let tablaDiv =
+    document.createElement("div");
+
+    tablaDiv.className =
+    "table-responsive";
+
+    let tabla =
+    document.createElement("table");
+
+    tabla.className =
+    "table table-bordered text-center";
+
+    let thead =
+    document.createElement("thead");
+
+    let tbody =
+    document.createElement("tbody");
+
+    let filtrosPersona = obtenerFiltros("buscador");
+    let filtrosExtra = obtenerFiltros("buscadorExtra");
+
+    let datosFiltrados = [];
+
+    data.forEach((fila,i)=>{
+
+        if(i===0){
+            datosFiltrados.push(fila);
+        }else{
+
+            let textoFila =
+            fila.join(" ").toLowerCase();
+
+            let coincidePersona =
+            filtrosPersona.length === 0 ||
+            filtrosPersona.some(filtro =>
+                textoFila.includes(filtro)
+            );
+
+            let coincideExtra =
+            filtrosExtra.length === 0 ||
+            filtrosExtra.some(filtro =>
+                textoFila.includes(filtro)
+            );
+
+            if(coincidePersona && coincideExtra){
+                datosFiltrados.push(fila);
+            }
+
+        }
+
+    });
+
+    if(
+        (filtrosPersona.length > 0 || filtrosExtra.length > 0) &&
+        datosFiltrados.length <= 1
+    ){
+        seccion.style.display = "none";
+    }
+
+    datosFiltrados.forEach((fila,i)=>{
+
+        let tr =
+        document.createElement("tr");
+
+        fila.forEach(col=>{
+
+            let td =
+            document.createElement(
+                i===0 ? "th":"td"
+            );
+
+            td.innerText = col;
+
+            tr.appendChild(td);
+
+        });
+
+        if(i===0){
+            thead.appendChild(tr);
+        }else{
+            tbody.appendChild(tr);
+        }
+
+    });
+
+    tabla.appendChild(thead);
+    tabla.appendChild(tbody);
+    tablaDiv.appendChild(tabla);
+    seccion.appendChild(tablaDiv);
+
+    let encabezados =
+    datosFiltrados[0];
+
+    if(!encabezados){
+        contenedor.appendChild(seccion);
+        return;
+    }
+
+    for(
+        let col=1;
+        col<encabezados.length;
+        col++
+    ){
+
+        let labels = [];
+        let valores = [];
+
+        for(
+            let i=1;
+            i<datosFiltrados.length;
+            i++
+        ){
+
+            let val =
+            parseFloat(datosFiltrados[i][col]);
+
+            if(!isNaN(val)){
+
+                labels.push(datosFiltrados[i][0]);
+                valores.push(val);
+
+            }
+
+        }
+
+        if(valores.length > 0){
+
+            let card =
+            document.createElement("div");
+
+            card.className =
+            "card-grafica";
+
+            let tituloGrafica =
+            document.createElement("h4");
+
+            tituloGrafica.innerHTML =
+            "📈 " + encabezados[col];
+
+            let canvas =
+            document.createElement("canvas");
+
+            canvas.height = 500;
+
+            if(labels.length > 100){
+                canvas.width = labels.length * 20;
+            }else{
+                canvas.width = 1000;
+            }
+
+            card.appendChild(tituloGrafica);
+            card.appendChild(canvas);
+
+            let explicacion =
+            document.createElement("div");
+
+            explicacion.className = "ia-box";
+            explicacion.innerHTML =
+            explicarGrafica(encabezados[col], labels, valores);
+
+            card.appendChild(explicacion);
+
+            seccion.appendChild(card);
+
+            let colorTextoGrafica =
+            document.body.classList.contains("modo-claro") ? "#111" : "white";
+
+            let tipoSeleccionado =
+            document.getElementById("tipoGrafica").value;
+
+            new Chart(canvas,{
+
+                type:tipoSeleccionado,
+
+                data:{
+
+                    labels:labels,
+
+                    datasets:[{
+
+                        label:encabezados[col],
+                        data:valores,
+                        borderWidth:3,
+
+                        backgroundColor: valores.map(v => {
+
+                            if(v >= 100){
+                                return "#00ff78";
+                            }
+
+                            else if(v >= 80){
+                                return "#ffff00";
+                            }
+
+                            else{
+                                return "#ff0000";
+                            }
+
+                        }),
+
+                        borderColor: valores.map(v => {
+
+                            if(v >= 100){
+                                return "#00cc66";
+                            }
+
+                            else if(v >= 80){
+                                return "#cccc00";
+                            }
+
+                            else{
+                                return "#cc0000";
+                            }
+
+                        }),
+
+                        tension:0.35,
+                        fill:false
+
+                    }]
+
+                },
+
+                options:{
+
+                    responsive:false,
+                    maintainAspectRatio:false,
+
+                    interaction:{
+                        mode:"nearest",
+                        intersect:true
+                    },
+
+                    plugins:{
+
+                        tooltip:{
+                            enabled:true,
+                            mode:"nearest",
+                            intersect:true,
+            backgroundColor:"#111111",
+            titleColor:"#00ff88",
+            bodyColor:"#ffffff",
+            borderColor:"#00ff88",
+            borderWidth:1,
+            padding:12,
+            displayColors:true,
+
+                            callbacks:{
+
+                                title:function(context){
+
+                                    if(!context || context.length === 0){
+                                        return "";
+                                    }
+
+                                    return "📌 " + context[0].label;
+
+                                },
+
+                                label:function(context){
+
+                                    let nombreColumna =
+                                        context.dataset.label || "Dato";
+
+                                    let valor =
+                                        context.formattedValue || context.raw;
+
+                                    return nombreColumna + ": " + valor;
+
+                                }
+
+                            }
+
+                        },
+
+
+                        title:{
+                            display:true,
+                            text:encabezados[col],
+                            color:colorTextoGrafica,
+                            font:{
+                                size:24,
+                                weight:"bold"
+                            }
+                        },
+
+                        legend:{
+
+                            labels:{
+                                color:colorTextoGrafica,
+                                font:{
+                                    size:18
+                                }
+                            }
+
+                        }
+
+                    },
+
+                    scales:
+                    tipoSeleccionado === "pie" || tipoSeleccionado === "doughnut"
+                    ? {}
+                    : {
+
+                        x:{
+
+                            ticks:{
+                                color:colorTextoGrafica,
+                                autoSkip:true,
+                                maxTicksLimit:20,
+                                maxRotation:45,
+                                minRotation:45,
+                                font:{
+                                    size:14
+                                }
+                            },
+
+                            grid:{
+                                color: document.body.classList.contains("modo-claro") ? "#cccccc" : "#333333"
+                            }
+
+                        },
+
+                        y:{
+
+                            beginAtZero:true,
+
+                            ticks:{
+                                color:colorTextoGrafica,
+                                font:{
+                                    size:14
+                                }
+                            },
+
+                            grid:{
+                                color: document.body.classList.contains("modo-claro") ? "#cccccc" : "#333333"
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+    }
+
+    contenedor.appendChild(seccion);
+
+}
+
+function explicarGrafica(nombreColumna, labels, valores){
+
+    let suma =
+    valores.reduce((a,b)=>a+b,0);
+
+    let promedio =
+    suma / valores.length;
+
+    let max =
+    Math.max(...valores);
+
+    let min =
+    Math.min(...valores);
+
+    let mayor =
+    labels[valores.indexOf(max)];
+
+    let menor =
+    labels[valores.indexOf(min)];
+
+    let arribaPromedio =
+    valores.filter(v => v >= promedio).length;
+
+    let tendencia = "";
+
+    if(valores[valores.length - 1] > valores[0]){
+        tendencia = "📈 La tendencia general parece ir en aumento.";
+    }else if(valores[valores.length - 1] < valores[0]){
+        tendencia = "📉 La tendencia general parece ir en disminución.";
+    }else{
+        tendencia = "➖ La tendencia general se mantiene estable.";
+    }
+
+    return `
+
+        🤖 <strong>Análisis inteligente:</strong><br><br>
+
+        📊 En <strong>${nombreColumna}</strong>
+        el promedio general es
+        <strong>${promedio.toFixed(2)}</strong>.<br><br>
+
+        🏆 El valor más alto pertenece a
+        <strong>${mayor}</strong>
+        con
+        <strong>${max}</strong>.<br><br>
+
+        📉 El valor más bajo pertenece a
+        <strong>${menor}</strong>
+        con
+        <strong>${min}</strong>.<br><br>
+
+        ✅ <strong>${arribaPromedio}</strong>
+        registros están por encima o igual al promedio.<br><br>
+
+        ${tendencia}
+
+    `;
+
+}
+
+function buscarGlobal(){
+    renderizarTodo();
+}
+
+function eliminarArchivo(index){
+
+    let confirmar =
+    confirm("¿Estás seguro de cerrar este archivo?");
+
+    if(confirmar){
+
+        archivosGuardados.splice(index,1);
+
+        localStorage.setItem(
+            "excelArchivos",
+            JSON.stringify(archivosGuardados)
+        );
+
+        renderizarTodo();
+
+    }
+
+}
+
+function eliminarTodo(){
+
+    let confirmar =
+    confirm("¿Eliminar todos los archivos?");
+
+    if(confirmar){
+
+        localStorage.removeItem("excelArchivos");
+        location.reload();
+
+    }
+
+}
+
+
+function obtenerMetricasGerenciales(){
+
+    let totalArchivos = archivosGuardados.length;
+    let totalHojas = 0;
+    let totalRegistros = 0;
+    let valores = [];
+
+    archivosGuardados.forEach(archivo => {
+
+        totalHojas += archivo.hojas || 1;
+
+        if(archivo.data && archivo.data.length > 1){
+            totalRegistros += archivo.data.length - 1;
+        }
+
+        if(!archivo.data || archivo.data.length < 2){
+            return;
+        }
+
+        const encabezados = archivo.data[0] || [];
+
+        archivo.data.slice(1).forEach((fila, indiceFila) => {
+
+            const nombreRegistro = String(fila[0] || "Registro " + (indiceFila + 1));
+
+            fila.forEach((celda, indiceColumna) => {
+
+                const valor = parseFloat(celda);
+
+                if(!isNaN(valor)){
+                    valores.push({
+                        archivo:archivo.nombre,
+                        registro:nombreRegistro,
+                        columna:String(encabezados[indiceColumna] || "Dato"),
+                        valor:valor
+                    });
+                }
+
+            });
+
+        });
+
+    });
+
+    const promedio = valores.length > 0
+        ? valores.reduce((suma,item) => suma + item.valor, 0) / valores.length
+        : 0;
+
+    const mejor = valores.length > 0
+        ? valores.reduce((a,b) => b.valor > a.valor ? b : a)
+        : null;
+
+    const peor = valores.length > 0
+        ? valores.reduce((a,b) => b.valor < a.valor ? b : a)
+        : null;
+
+    const cumplimiento = valores.length > 0
+        ? Math.round((valores.filter(item => item.valor >= 100).length / valores.length) * 100)
+        : 0;
+
+    let tendencia = "Sin datos";
+    let tendenciaDetalle = "No hay suficientes valores numéricos.";
+
+    if(valores.length >= 2){
+        const primero = valores[0].valor;
+        const ultimo = valores[valores.length - 1].valor;
+
+        if(ultimo > primero){
+            tendencia = "Aumento";
+            tendenciaDetalle = "Los últimos valores son mayores que los primeros.";
+        }else if(ultimo < primero){
+            tendencia = "Disminución";
+            tendenciaDetalle = "Los últimos valores son menores que los primeros.";
+        }else{
+            tendencia = "Estable";
+            tendenciaDetalle = "Los valores iniciales y finales son similares.";
+        }
+    }
+
+    const topMejores = [...valores]
+        .sort((a,b) => b.valor - a.valor)
+        .slice(0,5);
+
+    const topPeores = [...valores]
+        .sort((a,b) => a.valor - b.valor)
+        .slice(0,5);
+
+    return {
+        totalArchivos,
+        totalHojas,
+        totalRegistros,
+        valores,
+        promedio,
+        mejor,
+        peor,
+        cumplimiento,
+        tendencia,
+        tendenciaDetalle,
+        topMejores,
+        topPeores
+    };
+
+}
+
+function actualizarDashboardGerencial(){
+
+    const metricas = obtenerMetricasGerenciales();
+
+    const mejorRegistro = document.getElementById("kpiMejorRegistro");
+    const mejorDetalle = document.getElementById("kpiMejorDetalle");
+    const peorRegistro = document.getElementById("kpiPeorRegistro");
+    const peorDetalle = document.getElementById("kpiPeorDetalle");
+    const tendencia = document.getElementById("kpiTendencia");
+    const tendenciaDetalle = document.getElementById("kpiTendenciaDetalle");
+    const cumplimiento = document.getElementById("kpiCumplimiento");
+    const resumenTexto = document.getElementById("resumenEjecutivoTexto");
+
+    if(mejorRegistro){
+        mejorRegistro.innerText = metricas.mejor ? metricas.mejor.registro : "Sin datos";
+    }
+
+    if(mejorDetalle){
+        mejorDetalle.innerText = metricas.mejor
+            ? `${metricas.mejor.columna}: ${metricas.mejor.valor} · ${metricas.mejor.archivo}`
+            : "Carga un Excel para analizar.";
+    }
+
+    if(peorRegistro){
+        peorRegistro.innerText = metricas.peor ? metricas.peor.registro : "Sin datos";
+    }
+
+    if(peorDetalle){
+        peorDetalle.innerText = metricas.peor
+            ? `${metricas.peor.columna}: ${metricas.peor.valor} · ${metricas.peor.archivo}`
+            : "Carga un Excel para analizar.";
+    }
+
+    if(tendencia){
+        tendencia.innerText = metricas.tendencia;
+    }
+
+    if(tendenciaDetalle){
+        tendenciaDetalle.innerText = metricas.tendenciaDetalle;
+    }
+
+    if(cumplimiento){
+        cumplimiento.innerText = metricas.cumplimiento + "%";
+    }
+
+    if(resumenTexto){
+        if(metricas.totalArchivos === 0){
+            resumenTexto.innerText = "Carga uno o varios archivos Excel para generar un resumen ejecutivo automático.";
+        }else{
+            resumenTexto.innerHTML = `
+                Se analizaron <strong>${metricas.totalArchivos}</strong> archivo(s),
+                <strong>${metricas.totalHojas}</strong> hoja(s) y
+                <strong>${metricas.totalRegistros}</strong> registro(s).
+                El promedio general fue <strong>${metricas.promedio.toFixed(2)}</strong>.
+                El mejor registro detectado fue <strong>${metricas.mejor ? metricas.mejor.registro : "sin datos"}</strong>
+                con valor <strong>${metricas.mejor ? metricas.mejor.valor : 0}</strong>.
+                El valor más bajo fue de <strong>${metricas.peor ? metricas.peor.registro : "sin datos"}</strong>
+                con <strong>${metricas.peor ? metricas.peor.valor : 0}</strong>.
+                El cumplimiento general es de <strong>${metricas.cumplimiento}%</strong> tomando como referencia valores iguales o mayores a 100.
+            `;
+        }
+    }
+
+}
+
+function generarPDFEjecutivo(){
+
+    if(!archivosGuardados || archivosGuardados.length === 0){
+        alert("Primero carga un archivo de Excel para generar el PDF ejecutivo.");
+        return;
+    }
+
+    const metricas = obtenerMetricasGerenciales();
+    const jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF("p", "mm", "a4");
+    const fecha = new Date().toLocaleString("es-MX");
+
+    let y = 18;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(18);
+    doc.text("Reporte Ejecutivo - Gestión Operativa", 14, y);
+
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("Fecha de generación: " + fecha, 14, y);
+
+    y += 12;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.text("Resumen general", 14, y);
+
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("Archivos cargados: " + metricas.totalArchivos, 14, y);
+    y += 6;
+    doc.text("Hojas detectadas: " + metricas.totalHojas, 14, y);
+    y += 6;
+    doc.text("Registros totales: " + metricas.totalRegistros, 14, y);
+    y += 6;
+    doc.text("Promedio general: " + metricas.promedio.toFixed(2), 14, y);
+    y += 6;
+    doc.text("Cumplimiento: " + metricas.cumplimiento + "%", 14, y);
+
+    y += 12;
+    doc.setFont("helvetica", "bold");
+    doc.text("Mejor y peor registro", 14, y);
+    y += 8;
+    doc.setFont("helvetica", "normal");
+    doc.text("Mejor: " + (metricas.mejor ? `${metricas.mejor.registro} - ${metricas.mejor.columna}: ${metricas.mejor.valor}` : "Sin datos"), 14, y);
+    y += 6;
+    doc.text("Peor: " + (metricas.peor ? `${metricas.peor.registro} - ${metricas.peor.columna}: ${metricas.peor.valor}` : "Sin datos"), 14, y);
+    y += 6;
+    doc.text("Tendencia: " + metricas.tendencia + " - " + metricas.tendenciaDetalle, 14, y, {maxWidth:180});
+
+    y += 16;
+    doc.setFont("helvetica", "bold");
+    doc.text("Top 5 mejores resultados", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+
+    metricas.topMejores.forEach((item, index) => {
+        doc.text(`${index + 1}. ${item.registro} · ${item.columna}: ${item.valor}`, 14, y, {maxWidth:180});
+        y += 6;
+    });
+
+    y += 6;
+    doc.setFont("helvetica", "bold");
+    doc.text("Top 5 resultados más bajos", 14, y);
+    y += 7;
+    doc.setFont("helvetica", "normal");
+
+    metricas.topPeores.forEach((item, index) => {
+        doc.text(`${index + 1}. ${item.registro} · ${item.columna}: ${item.valor}`, 14, y, {maxWidth:180});
+        y += 6;
+    });
+
+    const canvases = Array.from(document.querySelectorAll("canvas")).slice(0,2);
+
+    canvases.forEach((canvas, index) => {
+        try{
+            doc.addPage();
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14);
+            doc.text("Gráfica " + (index + 1), 14, 18);
+            const imgData = canvas.toDataURL("image/png", 1.0);
+            doc.addImage(imgData, "PNG", 12, 28, 186, 90);
+        }catch(e){}
+    });
+
+    doc.save("Reporte_Ejecutivo_Gestion_Operativa.pdf");
+
+}
+
+function exportarExcelConsolidado(){
+
+    if(!archivosGuardados || archivosGuardados.length === 0){
+        alert("Primero carga uno o más archivos Excel para exportar el consolidado.");
+        return;
+    }
+
+    const metricas = obtenerMetricasGerenciales();
+    const wb = XLSX.utils.book_new();
+
+    const resumen = [
+        ["Reporte", "Excel Consolidado - Gestión Operativa"],
+        ["Fecha", new Date().toLocaleString("es-MX")],
+        ["Archivos cargados", metricas.totalArchivos],
+        ["Hojas detectadas", metricas.totalHojas],
+        ["Registros totales", metricas.totalRegistros],
+        ["Promedio general", metricas.promedio.toFixed(2)],
+        ["Cumplimiento", metricas.cumplimiento + "%"],
+        ["Mejor registro", metricas.mejor ? metricas.mejor.registro : "Sin datos"],
+        ["Peor registro", metricas.peor ? metricas.peor.registro : "Sin datos"]
+    ];
+
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resumen), "Resumen");
+
+    const consolidado = [["Archivo", "Registro", "Columna", "Valor"]];
+    metricas.valores.forEach(item => {
+        consolidado.push([item.archivo, item.registro, item.columna, item.valor]);
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(consolidado), "Consolidado");
+
+    archivosGuardados.forEach((archivo, index) => {
+        const nombreHoja = (archivo.nombre || "Archivo_" + (index + 1))
+            .replace(/[\\\/\?\*\[\]:]/g," ")
+            .substring(0,31);
+
+        XLSX.utils.book_append_sheet(
+            wb,
+            XLSX.utils.aoa_to_sheet(archivo.data || []),
+            nombreHoja || ("Archivo_" + (index + 1))
+        );
+    });
+
+    XLSX.writeFile(wb, "Consolidado_Gestion_Operativa.xlsx");
+
+}
+
+function generarWord(){
+
+    if(!archivosGuardados || archivosGuardados.length === 0){
+        alert("Primero carga un archivo de Excel para generar el documento Word.");
+        return;
+    }
+
+    const {
+        Document,
+        Packer,
+        Paragraph,
+        Table,
+        TableRow,
+        TableCell,
+        TextRun,
+        HeadingLevel,
+        AlignmentType,
+        WidthType
+    } = docx;
+
+    const fechaGeneracion =
+        new Date().toLocaleString("es-MX");
+
+    let totalArchivos = archivosGuardados.length;
+    let totalHojas = 0;
+    let totalRegistros = 0;
+    let valoresNumericos = [];
+
+    archivosGuardados.forEach(archivo => {
+
+        totalHojas += archivo.hojas || 1;
+
+        if(archivo.data && archivo.data.length > 1){
+            totalRegistros += archivo.data.length - 1;
+        }
+
+        if(archivo.data){
+            archivo.data.slice(1).forEach(fila => {
+                fila.forEach(celda => {
+                    let valor = parseFloat(celda);
+                    if(!isNaN(valor)){
+                        valoresNumericos.push(valor);
+                    }
+                });
+            });
+        }
+
+    });
+
+    let promedioGeneral =
+        valoresNumericos.length > 0
+        ? valoresNumericos.reduce((a,b)=>a+b,0) / valoresNumericos.length
+        : 0;
+
+    let contenido = [];
+
+    contenido.push(
+        new Paragraph({
+            text:"REPORTE DE DATOS",
+            heading:HeadingLevel.TITLE,
+            alignment:AlignmentType.CENTER
+        })
+    );
+
+    contenido.push(
+        new Paragraph({
+            text:"Sistema de Gestión Operativa",
+            alignment:AlignmentType.CENTER
+        })
+    );
+
+    contenido.push(
+        new Paragraph({
+            text:"Fecha de generación: " + fechaGeneracion,
+            alignment:AlignmentType.CENTER
+        })
+    );
+
+    contenido.push(new Paragraph({ text:" " }));
+
+    contenido.push(
+        new Paragraph({
+            text:"Resumen General",
+            heading:HeadingLevel.HEADING_1
+        })
+    );
+
+    contenido.push(
+        new Table({
+            width:{ size:100, type:WidthType.PERCENTAGE },
+            rows:[
+                new TableRow({
+                    children:[
+                        new TableCell({ children:[new Paragraph("Archivos cargados")] }),
+                        new TableCell({ children:[new Paragraph(String(totalArchivos))] })
+                    ]
+                }),
+                new TableRow({
+                    children:[
+                        new TableCell({ children:[new Paragraph("Hojas detectadas")] }),
+                        new TableCell({ children:[new Paragraph(String(totalHojas))] })
+                    ]
+                }),
+                new TableRow({
+                    children:[
+                        new TableCell({ children:[new Paragraph("Registros totales")] }),
+                        new TableCell({ children:[new Paragraph(String(totalRegistros))] })
+                    ]
+                }),
+                new TableRow({
+                    children:[
+                        new TableCell({ children:[new Paragraph("Promedio general")] }),
+                        new TableCell({ children:[new Paragraph(promedioGeneral.toFixed(2))] })
+                    ]
+                })
+            ]
+        })
+    );
+
+    contenido.push(new Paragraph({ text:" " }));
+
+    archivosGuardados.forEach((archivo, indexArchivo) => {
+
+        contenido.push(
+            new Paragraph({
+                text:"Archivo " + (indexArchivo + 1) + ": " + archivo.nombre,
+                heading:HeadingLevel.HEADING_1
+            })
+        );
+
+        if(!archivo.data || archivo.data.length === 0){
+            contenido.push(new Paragraph("No hay datos disponibles en este archivo."));
+            return;
+        }
+
+        let encabezados = archivo.data[0] || [];
+
+        contenido.push(
+            new Paragraph({
+                text:"Datos registrados",
+                heading:HeadingLevel.HEADING_2
+            })
+        );
+
+        let filasTabla = [];
+
+        filasTabla.push(
+            new TableRow({
+                children:encabezados.map(encabezado =>
+                    new TableCell({
+                        children:[
+                            new Paragraph({
+                                children:[
+                                    new TextRun({
+                                        text:String(encabezado || ""),
+                                        bold:true
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                )
+            })
+        );
+
+        archivo.data.slice(1, 31).forEach(fila => {
+            filasTabla.push(
+                new TableRow({
+                    children:encabezados.map((_, i) =>
+                        new TableCell({
+                            children:[new Paragraph(String(fila[i] ?? ""))]
+                        })
+                    )
+                })
+            );
+        });
+
+        contenido.push(
+            new Table({
+                width:{ size:100, type:WidthType.PERCENTAGE },
+                rows:filasTabla
+            })
+        );
+
+        if(archivo.data.length > 31){
+            contenido.push(
+                new Paragraph({
+                    text:"Nota: Se muestran los primeros 30 registros para mantener el documento ordenado."
+                })
+            );
+        }
+
+        contenido.push(new Paragraph({ text:" " }));
+
+        for(let col = 1; col < encabezados.length; col++){
+
+            let labels = [];
+            let valores = [];
+
+            for(let i = 1; i < archivo.data.length; i++){
+                let valor = parseFloat(archivo.data[i][col]);
+
+                if(!isNaN(valor)){
+                    labels.push(archivo.data[i][0]);
+                    valores.push(valor);
+                }
+            }
+
+            if(valores.length > 0){
+
+                let suma = valores.reduce((a,b)=>a+b,0);
+                let promedio = suma / valores.length;
+                let max = Math.max(...valores);
+                let min = Math.min(...valores);
+                let mayor = labels[valores.indexOf(max)];
+                let menor = labels[valores.indexOf(min)];
+
+                contenido.push(
+                    new Paragraph({
+                        text:"Análisis de " + encabezados[col],
+                        heading:HeadingLevel.HEADING_2
+                    })
+                );
+
+                contenido.push(
+                    new Paragraph("Promedio: " + promedio.toFixed(2))
+                );
+
+                contenido.push(
+                    new Paragraph("Valor más alto: " + mayor + " con " + max)
+                );
+
+                contenido.push(
+                    new Paragraph("Valor más bajo: " + menor + " con " + min)
+                );
+
+                contenido.push(
+                    new Paragraph("Registros analizados: " + valores.length)
+                );
+
+                contenido.push(new Paragraph({ text:" " }));
+            }
+        }
+
+    });
+
+    contenido.push(
+        new Paragraph({
+            text:"Conclusión",
+            heading:HeadingLevel.HEADING_1
+        })
+    );
+
+    contenido.push(
+        new Paragraph(
+            "El reporte permite visualizar de forma ordenada los datos cargados desde Excel, incluyendo registros, valores numéricos, promedios y resultados destacados. Esta información facilita el análisis operativo y la toma de decisiones."
+        )
+    );
+
+    const documento = new Document({
+        sections:[
+            {
+                properties:{},
+                children:contenido
+            }
+        ]
+    });
+
+    Packer.toBlob(documento).then(blob => {
+
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "Reporte_Gestion_Operativa.docx";
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

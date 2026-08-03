@@ -1,3 +1,4 @@
+
 // ======================================================
 // NAVEGACIÓN DEL DASHBOARD
 // ======================================================
@@ -15,7 +16,7 @@ function prepararMenu() {
         ["menuInicio", "inicio"],
         ["menuPendientes", "pendientes"],
         ["menuEvidencias", "evidencias"],
-        ["menuReportes", "reportes"],
+        ["menuReportes", "tablas"],
         ["menuUsuarios", "bitacora"],
         ["menuBitacora", "bitacora"],
         ["menuIA", "ia"],
@@ -26,13 +27,24 @@ function prepararMenu() {
     opciones.forEach(([boton, seccion]) => {
 
         const enlace = document.getElementById(boton);
-        const destino = document.getElementById(seccion);
 
-        if (!enlace || !destino) return;
+        if (!enlace) return;
 
         enlace.addEventListener("click", (e) => {
 
             e.preventDefault();
+
+            if (seccion === "tablas") {
+
+                window.location.href = "tablas.html";
+
+                return;
+
+            }
+
+            const destino = document.getElementById(seccion);
+
+            if (!destino) return;
 
             document
                 .querySelectorAll(".sidebar-menu a")
@@ -41,8 +53,11 @@ function prepararMenu() {
             enlace.classList.add("activo");
 
             destino.scrollIntoView({
+
                 behavior: "smooth",
+
                 block: "start"
+
             });
 
         });
@@ -50,3 +65,25 @@ function prepararMenu() {
     });
 
 }
+
+/* ======================================================
+   IR A MÓDULO
+====================================================== */
+
+function irAModulo(idModulo) {
+
+    const destino = document.getElementById(idModulo);
+
+    if (!destino) return;
+
+    destino.scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "start"
+
+    });
+
+}
+
+window.irAModulo = irAModulo;

@@ -36,37 +36,54 @@ async function cargarUsuariosActivos() {
 
     contenedor.innerHTML = "";
 
-    data.forEach(usuario => {
+    data
 
-        const tarjeta =
-            document.createElement("div");
+        .filter(usuario => {
 
-        tarjeta.className =
-            "usuario-activo-card";
+            const nombre =
+                (usuario.nombre || "").toLowerCase();
 
-        tarjeta.innerHTML = `
-            <img
-                src="${usuario.foto || "assets/img/usuarios/default.png"}"
-                class="usuario-avatar"
-                alt="${usuario.nombre}">
+            // Ocultar Administrador
+            if (nombre.includes("augusto")) return false;
 
-            <div class="usuario-datos">
+            // Ocultar Invitado
+            if (nombre.includes("invitado")) return false;
 
-                <h4>${usuario.nombre}</h4>
+            return true;
 
-                <span class="estado ${usuario.estado ? "conectado" : "desconectado"}">
+        })
 
-                    <i class="fa-solid fa-circle"></i>
+        .forEach(usuario => {
 
-                    ${usuario.estado ? "Conectado" : "Desconectado"}
+            const tarjeta =
+                document.createElement("div");
 
-                </span>
+            tarjeta.className =
+                "usuario-activo-card";
 
-            </div>
-        `;
+            tarjeta.innerHTML = `
+                <img
+                    src="${usuario.foto || "assets/img/usuarios/default.png"}"
+                    class="usuario-avatar"
+                    alt="${usuario.nombre}">
 
-        contenedor.appendChild(tarjeta);
+                <div class="usuario-datos">
 
-    });
+                    <h4>${usuario.nombre}</h4>
+
+                    <span class="estado ${usuario.estado ? "conectado" : "desconectado"}">
+
+                        <i class="fa-solid fa-circle"></i>
+
+                        ${usuario.estado ? "Conectado" : "Desconectado"}
+
+                    </span>
+
+                </div>
+            `;
+
+            contenedor.appendChild(tarjeta);
+
+        });
 
 }

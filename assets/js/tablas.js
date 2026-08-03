@@ -1,11 +1,18 @@
 /* ==========================================================
-   TABLAS Y GRÁFICAS V2
+   VARIABLES GLOBALES V3
 ========================================================== */
 
-document.addEventListener("DOMContentLoaded", iniciarModuloTablas);
+let libroExcel = null;
+
+let hojaActual = "";
+
+let nombresHojas = [];
 
 let datosExcel = [];
+
 let graficaActual = null;
+
+let archivoActual = null;
 
 /* ==========================================================
    INICIO
@@ -22,79 +29,81 @@ function iniciarModuloTablas() {
 }
 
 /* ==========================================================
-   USUARIO
+   IMPORTAR EXCEL V3
 ========================================================== */
 
-function obtenerUsuario() {
+async function seleccionarArchivo(evento){
 
-    const parametros = new URLSearchParams(window.location.search);
+    const archivo = evento.target.files[0];
 
-    const usuario =
-        parametros.get("usuario") ||
-        sessionStorage.getItem("usuarioSesionActual") ||
-        "Invitado";
+    if(!archivo) return;
 
-    const etiqueta =
-        document.getElementById("usuarioActivo");
+    archivoActual = archivo;
 
-    if (etiqueta) {
+    const extension = archivo.name
+        .split(".")
+        .pop()
+        .toLowerCase();
 
-        etiqueta.textContent = usuario;
+    if(!["xlsx","xls","csv"].includes(extension)){
+
+        alert("Formato de archivo no compatible.");
+
+        return;
+
+    }
+
+    try{
+
+        const buffer = await archivo.arrayBuffer();
+
+        libroExcel = XLSX.read(buffer,{
+
+            type:"array"
+
+        });
+
+        nombresHojas = [...libroExcel.SheetNames];
+
+        hojaActual = nombresHojas[0];
+
+        cargarHoja(hojaActual);
+
+        construirPanelHojas();
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Error al leer el archivo.");
 
     }
 
 }
 
 /* ==========================================================
-   CARGA DE EXCEL
+   CARGAR HOJA
 ========================================================== */
 
-function prepararCargaExcel() {
+function cargarHoja(nombreHoja){
 
-    const input =
-        document.getElementById("excelInput");
+    hojaActual = nombreHoja;
 
-    if (!input) return;
+    const hoja = libroExcel.Sheets[nombreHoja];
 
-    input.addEventListener("change", seleccionarArchivo);
+    datosExcel = XLSX.utils.sheet_to_json(hoja,{
 
-}
+        header:1,
 
-/* ==========================================================
-   SELECCIÓN
-========================================================== */
+        defval:""
 
-function seleccionarArchivo(evento) {
+    });
 
-    const archivo = evento.target.files[0];
+    mostrarTabla(datosExcel);
 
-    if (!archivo) return;
-
-    const lector = new FileReader();
-
-    lector.onload = function (e) {
-
-        const datos = new Uint8Array(e.target.result);
-
-        const libro = XLSX.read(datos, { type: "array" });
-
-        const primeraHoja = libro.SheetNames[0];
-
-        const hoja = libro.Sheets[primeraHoja];
-
-        const contenido = XLSX.utils.sheet_to_json(hoja, {
-            header: 1
-        });
-
-datosExcel = contenido;
-
-mostrarTabla(datosExcel);
-
-actualizarEstadisticas(libro, datosExcel);
-
-    };
-
-    lector.readAsArrayBuffer(archivo);
+    actualizarEstadisticas(libroExcel,datosExcel);
 
 }
 

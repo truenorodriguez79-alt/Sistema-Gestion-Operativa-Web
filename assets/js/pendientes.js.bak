@@ -28,10 +28,7 @@ const txtDescripcion = document.getElementById("descripcion");
 const txtFecha = document.getElementById("fechaLimite");
 const txtHora = document.getElementById("horaLimite");
 
-const btnVoz = document.getElementById("btnVoz");
-
-const cuerpoTabla =
-    document.getElementById("listaPendientes");
+const cuerpoTabla = document.getElementById("tbodyPendientes");
 
 const txtBuscar = document.getElementById("buscarPendiente");
 
@@ -77,9 +74,9 @@ async function iniciarSistema() {
 
     console.log("========================================");
 
-await cargarUltimoFolioSupabase();
+    cargarUltimoFolio();
 
-await cargarPendientesSupabase();
+    await cargarPendientesSupabase();
 
     actualizarTabla();
 
@@ -121,13 +118,18 @@ function registrarEventos() {
    FOLIOS
 ========================================================== */
 
-function generarFolio() {
+function generarFolio(){
 
     ultimoFolio++;
 
-    return ultimoFolio;
+    return "#" +
+
+    String(ultimoFolio)
+
+    .padStart(6,"0");
 
 }
+
 
 function cargarUltimoFolio(){
 
@@ -143,37 +145,6 @@ function cargarUltimoFolio(){
 
 }
 
-async function cargarUltimoFolioSupabase() {
-
-    const { data, error } = await supabaseClient
-        .from("pendientes")
-        .select("folio")
-        .order("folio", { ascending: false })
-        .limit(1);
-
-    if (error) {
-
-        console.error(error);
-        return;
-
-    }
-
-    ultimoFolio =
-        data.length > 0
-            ? Number(data[0].folio)
-            : 0;
-
-    const folioActual =
-        document.getElementById("folioActual");
-
-    if (folioActual) {
-
-        folioActual.textContent =
-            "#" + String(ultimoFolio + 1).padStart(6, "0");
-
-    }
-
-}
 
 function guardarUltimoFolio(){
 
@@ -191,24 +162,7 @@ function guardarUltimoFolio(){
    SUPABASE
 ========================================================== */
 
-async function cargarPendientesSupabase() {
-
-    const usuario =
-        sessionStorage.getItem("usuarioSesionActual");
-
-    let consulta = supabaseClient
-        .from("pendientes")
-        .select("*");
-
-    // Administrador y Jasso pueden ver todo
-    if (usuario !== "augusto" && usuario !== "jasso") {
-
-        consulta = consulta.eq(
-            "asignado_a",
-            usuario
-        );
-
-    }
+async function cargarPendientesSupabase(){
 
     const {
 
@@ -216,20 +170,25 @@ async function cargarPendientesSupabase() {
 
         error
 
-    } = await consulta.order(
+    } = await supabase
+
+    .from("pendientes")
+
+    .select("*")
+
+    .order(
+
         "folio",
+
         {
-            ascending: true
+
+            ascending:true
+
         }
+
     );
 
-
-console.log("Usuario:", usuario);
-console.log("Datos recibidos:", data);
-console.log("Error:", error);
-
-
-    if (error) {
+    if(error){
 
         console.error(error);
 
@@ -237,63 +196,37 @@ console.log("Error:", error);
 
     }
 
-
-    
     pendientes = data || [];
 
 }
 
-async function guardarPendienteSupabase(pendiente){
+async function guardarPendienteSupabase(
 
-    const { data, error } = await supabaseClient
+    pendiente
 
-        .from("pendientes")
+){
 
-        .insert([pendiente])
+    const {
 
-        .select()
+        error
 
-        .single();
+    } = await supabase
+
+    .from("pendientes")
+
+    .insert([pendiente]);
 
     if(error){
 
-        console.error("ERROR COMPLETO:", error);
-        console.error("Mensaje:", error.message);
-        console.error("Detalles:", error.details);
-        console.error("Hint:", error.hint);
-        console.error("Código:", error.code);
+        console.error(error);
 
-        return null;
+        return false;
 
     }
 
-    return data;
+    return true;
 
 }
-
-// ==========================================
-// SINCRONIZAR MÓDULOS
-// ==========================================
-
-if (typeof actualizarPaneles === "function") {
-
-    await actualizarPaneles();
-
-}
-
-if (typeof cargarResumenDashboard === "function") {
-
-    await cargarResumenDashboard();
-
-}
-
-if (typeof cargarBitacora === "function") {
-
-    await cargarBitacora();
-
-}
-
-return data;
 
 /* ==========================================================
    HISTORIAL
@@ -317,7 +250,7 @@ async function registrarHistorial(
 
         );
 
-        const { error } = await supabaseClient
+        const { error } = await supabase
 
             .from("historial_pendientes")
 
@@ -333,15 +266,17 @@ async function registrarHistorial(
 
             }]);
 
-       if (error) {
+        if(error){
 
-    console.error("ERROR HISTORIAL COMPLETO:", error);
-    console.error("Mensaje:", error.message);
-    console.error("Detalles:", error.details);
-    console.error("Hint:", error.hint);
-    console.error("Código:", error.code);
+            console.error(
 
-}
+                "Error historial:",
+
+                error
+
+            );
+
+        }
 
     }
 
@@ -369,7 +304,7 @@ function iniciarRealtime(){
 
     }
 
-    canalRealtime = supabaseClient
+    canalRealtime = supabase
 
     .channel(
 
@@ -432,7 +367,7 @@ function actualizarTabla() {
         fila.innerHTML = `
             <td>${pendiente.folio}</td>
             <td>${pendiente.titulo}</td>
-            <td>${pendiente.asignado_a}</td>
+            <td>${pendiente.responsable}</td>
             <td>
                 <span class="prioridad-${pendiente.prioridad.toLowerCase()}">
                     ${pendiente.prioridad}
@@ -551,35 +486,20 @@ function crearTarjetaKanban(pendiente) {
     tarjeta.draggable = true;
 
     tarjeta.dataset.id = pendiente.id;
-tarjeta.innerHTML = `
 
-    <div class="folio-kanban">
-        ${pendiente.folio}
-    </div>
+    tarjeta.innerHTML = `
 
-    <h3>${pendiente.titulo}</h3>
+        <h3>${pendiente.titulo}</h3>
 
-    <p>${pendiente.descripcion || ""}</p>
+        <p>${pendiente.descripcion || ""}</p>
 
-    <div class="info-kanban">
+        <span class="badge ${pendiente.prioridad.toLowerCase()}">
 
-        <small>
-            <strong>Creó:</strong>
-            ${pendiente.creado_por}
-        </small>
+            ${pendiente.prioridad}
 
-        <small>
-            <strong>Asignado:</strong>
-            ${pendiente.asignado_a}
-        </small>
+        </span>
 
-    </div>
-
-    <span class="badge ${pendiente.prioridad.toLowerCase()}">
-        ${pendiente.prioridad}
-    </span>
-
-`;
+    `;
 
     tarjeta.addEventListener("dragstart", () => {
 
@@ -629,26 +549,21 @@ async function eliminarPendiente(id) {
 
     }
 
-console.log("ID a eliminar:", id);
-
-
-    const { error } = await supabaseClient
+    const { error } = await supabase
 
         .from("pendientes")
 
         .delete()
 
-       .eq("id", Number(id));
+        .eq("id", id);
 
-   if (error) {
+    if (error) {
 
-    console.error("ERROR SUPABASE:", error);
+        console.error(error);
 
-} else {
+        return;
 
-    console.log("Pendiente eliminado correctamente");
-
-}
+    }
 
     await cargarPendientesSupabase();
 
@@ -684,6 +599,10 @@ function editarPendiente(id) {
 
     txtDescripcion.value = pendiente.descripcion;
 
+    cmbResponsable.value = pendiente.responsable;
+
+    cmbPrioridad.value = pendiente.prioridad;
+
     txtFecha.value = pendiente.fecha || "";
 
     txtHora.value = pendiente.hora || "";
@@ -705,40 +624,29 @@ async function crearPendiente() {
         return;
 
     }
-const usuarioSesion =
-    sessionStorage.getItem("usuarioSesionActual");
 
-const responsable =
-    inputAsignado.value || usuarioSesion;
+    const datos = {
 
-const datos = {
+        titulo,
 
-    titulo,
+        descripcion: txtDescripcion.value.trim(),
 
-    descripcion: txtDescripcion.value.trim(),
+        
+        fecha: txtFecha.value,
 
-    creado_por: usuarioSesion,
+        hora: txtHora.value
 
-    asignado_a: responsable,
-
-    prioridad: "Media",
-
-    estado: "Pendiente",
-
-fecha_limite: txtFecha.value || null
-
-};
+    };
 
     if (pendienteEditando) {
 
- const { data, error } = await supabaseClient
-    .from("pendientes")
-    .delete()
-    .eq("id", id)
-    .select();
+        const { error } = await supabase
 
-console.log("Filas eliminadas:", data);
-console.log("Error:", error);
+            .from("pendientes")
+
+            .update(datos)
+
+            .eq("id", pendienteEditando.id);
 
         if (error) {
 
@@ -760,17 +668,19 @@ console.log("Error:", error);
 
     } else {
 
-datos.folio = generarFolio();
+        datos.id = crypto.randomUUID();
 
-datos.estado = "Pendiente";
+        datos.folio = generarFolio();
 
-const pendienteCreado =
-    await guardarPendienteSupabase(datos);
+        datos.estado = "Pendiente";
 
-if (!pendienteCreado) return;
+        datos.creado = new Date().toISOString();
 
-// Actualizar el siguiente folio desde Supabase
-await cargarUltimoFolioSupabase();
+        const ok = await guardarPendienteSupabase(datos);
+
+        if (!ok) return;
+
+        guardarUltimoFolio();
 
         registrarMovimiento(
 
@@ -780,10 +690,14 @@ await cargarUltimoFolioSupabase();
 
         );
 
-await registrarHistorial(
-    pendienteCreado.id,
+        await registrarHistorial(
+
+    datos.id,
+
     "CREAR",
-    `Se creó el pendiente ${pendienteCreado.folio}`
+
+    `Se creó el pendiente ${datos.folio}`
+
 );
 
     }
@@ -860,7 +774,7 @@ async function moverTarjeta(e) {
 
     }
 
-    const { error } = await supabaseClient
+    const { error } = await supabase
 
         .from("pendientes")
 
@@ -1184,110 +1098,3 @@ if (btnModo) {
     });
 
 }
-
-/* ==========================================================
-   DICTADO POR VOZ
-========================================================== */
-if (btnVoz) {
-
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-
-        alert("Este navegador no soporta reconocimiento de voz.");
-
-    } else {
-
-        const reconocimiento = new SpeechRecognition();
-
-        reconocimiento.lang = "es-MX";
-        reconocimiento.continuous = false;
-        reconocimiento.interimResults = false;
-
-        btnVoz.addEventListener("click", () => {
-
-            console.log("🎤 Iniciando reconocimiento...");
-            reconocimiento.start();
-
-        });
-
-        reconocimiento.onstart = () => {
-
-            console.log("✅ Micrófono iniciado");
-
-        };
-
-        reconocimiento.onspeechstart = () => {
-
-            console.log("🗣️ Empezaste a hablar");
-
-        };
-
-        reconocimiento.onresult = (event) => {
-
-            console.log("📢 Resultado:", event);
-
-            txtDescripcion.value = event.results[0][0].transcript;
-
-        };
-
-        reconocimiento.onerror = (event) => {
-
-            console.error("❌ Error:", event);
-
-        };
-
-        reconocimiento.onend = () => {
-
-            console.log("🔚 Reconocimiento finalizado");
-
-        };
-
-    }
-
-}
-
-// ==========================================================
-// ASIGNACIÓN SEGÚN PERMISOS
-// ==========================================================
-
-const botonesAsignar = document.querySelectorAll(".btn-asignar");
-const inputAsignado = document.getElementById("asignadoA");
-const contenedorAsignacion = document.querySelector(".usuarios-asignacion");
-
-const usuarioActual =
-    sessionStorage.getItem("usuarioSesionActual");
-
-if (usuarioActual === "jasso" || usuarioActual === "augusto") {
-
-    contenedorAsignacion.style.display = "flex";
-
-    botonesAsignar.forEach(boton => {
-
-        boton.addEventListener("click", () => {
-
-            botonesAsignar.forEach(btn =>
-                btn.classList.remove("activo")
-            );
-
-            boton.classList.add("activo");
-
-            inputAsignado.value =
-                boton.dataset.usuario;
-
-        });
-
-    });
-
-} else {
-
-    contenedorAsignacion.style.display = "none";
-
-    inputAsignado.value = usuarioActual;
-
-}
-
-window.editarPendiente = editarPendiente;
-window.eliminarPendiente = eliminarPendiente;

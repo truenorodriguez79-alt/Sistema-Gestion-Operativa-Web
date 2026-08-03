@@ -4,579 +4,532 @@
 <head>
 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <title>Gestión Operativa | Pendientes</title>
 
-    <title>Gestión de Pendientes</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/pendientes.css">
 
-    <!-- ==========================================================
-         BOOTSTRAP
-    ========================================================== -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-
-    <!-- ==========================================================
-         FONT AWESOME
-    ========================================================== -->
-
-    <script
-        src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
-        crossorigin="anonymous"></script>
-
-    <!-- ==========================================================
-         CSS
-    ========================================================== -->
-
-    <link rel="stylesheet"
-          href="assets/css/styles.css">
-
-    <link rel="stylesheet"
-          href="assets/css/dashboard.css">
-
-    <link rel="stylesheet"
-          href="assets/css/pendientes.css">
 
 </head>
 
 <body>
 
-    <!-- ==========================================================
-         CONTENEDOR PRINCIPAL
-    ========================================================== -->
+    <div class="contenedor-principal">
 
-    <div id="appPendientes">
+        <!-- ========================================================= -->
+        <!-- PANEL IZQUIERDO -->
+        <!-- ========================================================= -->
 
-        <!-- ==========================================================
-             CONTENEDOR GENERAL
-        ========================================================== -->
+<aside class="panel-izquierdo">
 
-        <div class="contenedor-pendientes">
+    <!-- ===================================== -->
+    <!-- LOGO -->
+    <!-- ===================================== -->
 
-            <!-- ==========================================================
-                 SIDEBAR
-            ========================================================== -->
+    <div class="logo-panel">
 
-            <aside class="sidebar">
+        <img
+            src="assets/img/logos/logo.png"
+            alt="Gestión Operativa"
+            class="logo">
 
-                <div class="sidebar-logo">
+        <h2>Gestión Operativa</h2>
 
-                    <img
-                        src="assets/img/logos/logo.png"
-                        alt="Logo CFE">
+        <p>Sistema Integral de Pendientes</p>
 
-                    <div>
+    </div>
 
-                        <h2>Gestión Operativa</h2>
 
-                        <small>Control • Eficiencia • Resultados</small>
 
-                    </div>
+    <!-- ===================================== -->
+    <!-- USUARIO -->
+    <!-- ===================================== -->
 
-                </div>
+    <div class="card-usuario">
 
-           <nav class="sidebar-menu">
+        <img
+            src="assets/img/usuarios/Admin.avif"
+            id="fotoUsuario"
+            alt="Usuario">
 
-            <!-- ==========================================================
-     TARJETA DEL USUARIO
-========================================================== -->
+        <h3 id="nombreUsuario">
+            Cargando...
+        </h3>
 
-<div class="sidebar-user-card">
+        <span id="rolUsuario">
+            Usuario
+        </span>
 
-    <img
-        id="fotoUsuarioSidebar"
-        src="assets/img/team/default.png"
-        alt="Usuario"
-        class="sidebar-user-photo">
+    </div>
 
-    <h3 id="nombreUsuarioSidebar">
-        Cargando...
-    </h3>
+<div class="folio-container">
 
-    <span class="estado-sidebar">
+    <span>Folio</span>
 
-        <i class="fa-solid fa-circle"></i>
+    <strong id="folioActual">
 
-        Sesión activa
+        #000001
 
-    </span>
+    </strong>
 
 </div>
 
-    <a href="index.html" id="menuInicio">
+    <!-- ===================================== -->
+    <!-- REGRESAR -->
+    <!-- ===================================== -->
 
-        <i class="fa-solid fa-house"></i>
-
-        <span>Inicio</span>
-
-    </a>
-
-    <a href="#" class="activo">
-
-        <i class="fa-solid fa-list-check"></i>
-
-        <span>Pendientes</span>
-
-    </a>
-
-    <hr>
-
-    <a href="index.html" id="btnRegresarDashboard">
+    <a
+        href="index.html"
+        class="btn-regresar">
 
         <i class="fa-solid fa-arrow-left"></i>
 
-        <span>Regresar al Dashboard</span>
+        Regresar al Inicio
 
     </a>
 
-</nav>
+</aside>
 
-            </aside>
+        <!-- ========================================================= -->
+        <!-- CONTENIDO CENTRAL -->
+        <!-- ========================================================= -->
 
-            <!-- ==========================================================
-                 CONTENIDO
-            ========================================================== -->
+       <main class="contenido-principal">
 
-            <main id="contenidoPendientes">
+    <!-- ===================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ===================================== -->
 
-                <!-- ======================================================
-                     HEADER
-                ======================================================= -->
+    <header class="encabezado">
 
-                <header class="topbar">
+        <div>
 
-                    <div>
+            <h1>Gestión Operativa</h1>
 
-                        <h2 id="saludo">
-
-                            Gestión Integral de Pendientes
-
-                        </h2>
-
-                        <p id="saludoRol">
-
-                            Administración de actividades
-
-                        </p>
-
-                    </div>
-
-                    <div class="usuario-box">
-
-                        <div class="usuario-info">
-
-                            <span id="nombreUsuario"></span>
-
-                            <small id="rolUsuario"></small>
-
-                            <small id="estadoUsuario">
-
-                                Sesión activa
-
-                            </small>
-
-                        </div>
-
-                        <button
-                            id="btnCerrarSesion"
-                            class="btn-cerrar-sesion">
-
-                            <i class="fa-solid fa-right-from-bracket"></i>
-
-                            Salir
-
-                        </button>
-
-                    </div>
-
-                </header>
-
-                <!-- ======================================================
-                     CUERPO
-                ======================================================= -->
-
-                <section id="cuerpoPendientes">
-
-                    <!-- PANEL IZQUIERDO -->
-
-                   <aside id="panelIzquierdo">
-
-    <div class="dashboard-card">
-
-        <h3>
-
-            <i class="fa-solid fa-circle-plus"></i>
-
-            Nuevo Pendiente
-
-        </h3>
-
-        <hr>
-
-        <div class="form-group">
-
-            <label>Título</label>
-
-            <input
-                type="text"
-                id="tituloPendiente"
-                class="form-control"
-                placeholder="Título del pendiente">
+            <p>
+                Administración de actividades y seguimiento de pendientes
+            </p>
 
         </div>
 
-        <div class="form-group mt-3">
+        <div class="acciones-superiores">
 
-            <label>Descripción</label>
+            <span id="usuarioActivo">
+                Usuario
+            </span>
 
-            <textarea
-                id="descripcionPendiente"
-                class="form-control"
-                rows="5"
-                placeholder="Describe el trabajo..."></textarea>
+            <button id="btnModo">
 
-        </div>
+                <i class="fa-solid fa-moon"></i>
 
-        <div
-            id="contenedorAsignacion"
-            class="form-group mt-3"
-            style="display:none;">
-
-            <label>Asignar a</label>
-
-            <select
-                id="usuarioAsignado"
-                class="form-select">
-
-                <option value="">Seleccione un usuario</option>
-
-                <option value="elizabeth">Elizabeth</option>
-
-                <option value="enrique">Enrique</option>
-
-                <option value="jasso">Jasso</option>
-
-            </select>
-
-        </div>
-
-        <div class="form-group mt-3">
-
-            <label>Prioridad</label>
-
-            <select
-                id="prioridadPendiente"
-                class="form-select">
-
-                <option value="Baja">Baja</option>
-
-                <option value="Media">Media</option>
-
-                <option value="Alta">Alta</option>
-
-                <option value="Urgente">Urgente</option>
-
-            </select>
-
-        </div>
-
-        <div class="form-group mt-3">
-
-            <label>Fecha límite</label>
-
-            <input
-                type="date"
-                id="fechaLimite"
-                class="form-control">
-
-        </div>
-
-        <div class="d-grid mt-4">
-
-            <button
-                id="btnGuardarPendiente"
-                class="btn btn-success">
-
-                <i class="fa-solid fa-floppy-disk"></i>
-
-                Guardar Pendiente
+                Claro / Oscuro
 
             </button>
 
         </div>
 
-    </div>
+    </header>
 
-    <div class="dashboard-card mt-4">
 
-        <h3>
+
+    <!-- ===================================== -->
+    <!-- ESTADÍSTICAS -->
+    <!-- ===================================== -->
+
+    <section class="estadisticas">
+
+        <div class="card-estadistica">
+
+            <h3>Pendientes</h3>
+
+            <span id="totalPendientes">0</span>
+
+        </div>
+
+        <div class="card-estadistica">
+
+            <h3>En proceso</h3>
+
+            <span id="totalProceso">0</span>
+
+        </div>
+
+        <div class="card-estadistica">
+
+            <h3>Finalizados</h3>
+
+            <span id="totalFinalizados">0</span>
+
+        </div>
+
+        <div class="card-estadistica urgente">
+
+            <h3>Urgentes</h3>
+
+            <span id="totalUrgentes">0</span>
+
+        </div>
+
+        <div class="card-estadistica progreso">
+
+            <h3>Progreso</h3>
+
+            <span id="porcentajeProgreso">0%</span>
+
+        </div>
+
+    </section>
+
+    <!-- ===================================== -->
+<!-- NUEVO PENDIENTE -->
+<!-- ===================================== -->
+
+<div class="card-formulario">
+
+    <h2>
+        <i class="fa-solid fa-plus-circle"></i>
+        Nuevo Pendiente
+    </h2>
+
+    <form id="formPendiente">
+
+        <!-- Título -->
+
+        <label>Título</label>
+
+        <input
+            type="text"
+            id="titulo"
+            maxlength="120"
+            placeholder="Escribe el título..."
+            required>
+
+        <!-- Descripción -->
+
+        <label>Descripción</label>
+
+        <textarea
+            id="descripcion"
+            rows="5"
+            placeholder="Describe el pendiente..."
+            required></textarea>
+
+<!-- Asignar a -->
+
+<label>Asignar a</label>
+
+<div class="usuarios-asignacion">
+
+    <button
+        type="button"
+        class="btn-asignar"
+        data-usuario="jasso">
+        Jasso
+    </button>
+
+    <button
+        type="button"
+        class="btn-asignar"
+        data-usuario="elizabeth">
+        Elizabeth
+    </button>
+
+    <button
+        type="button"
+        class="btn-asignar"
+        data-usuario="enrique">
+        Enrique
+    </button>
+
+</div>
+
+<input
+    type="hidden"
+    id="asignadoA">
+
+
+        <!-- Fecha -->
+
+        <label>Fecha límite (Opcional)</label>
+
+        <input
+            type="date"
+            id="fechaLimite">
+
+        <!-- Hora -->
+
+        <label>Hora (Opcional)</label>
+
+        <input
+            type="time"
+            id="horaLimite">
+
+        <!-- Dictado -->
+
+        <button
+            type="button"
+            id="btnVoz">
 
             <i class="fa-solid fa-microphone"></i>
 
             Dictado por Voz
 
-        </h3>
+        </button>
 
-        <hr>
-
-        <p>
-
-            Próximamente podrás crear pendientes usando tu voz.
-
-        </p>
+        <!-- Guardar -->
 
         <button
-            id="btnVoz"
-            class="btn btn-primary w-100">
+            type="submit"
+            id="btnGuardar">
 
-            <i class="fa-solid fa-microphone-lines"></i>
+            <i class="fa-solid fa-floppy-disk"></i>
 
-            Iniciar Dictado
+            Guardar Pendiente
 
         </button>
 
-    </div>
+    </form>
 
-</aside>
+</div>
 
-                    <!-- PANEL CENTRAL -->
+    <!-- ===================================== -->
+    <!-- TABLA -->
+    <!-- ===================================== -->
 
-                   <section id="panelCentral">
+    <section class="contenedor-tabla">
 
-    <div class="dashboard-card">
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-
-            <h3>
-
-                <i class="fa-solid fa-list-check"></i>
-
-                Lista de Pendientes
-
-            </h3>
+        <div class="barra-tabla">
 
             <input
                 type="search"
                 id="buscarPendiente"
-                class="form-control"
-                style="max-width:300px;"
                 placeholder="Buscar pendiente...">
 
         </div>
 
-        <div class="table-responsive">
+        <table id="tablaPendientes">
 
-            <table class="table table-hover align-middle">
+            <thead>
 
-                <thead>
+                <tr>
 
-                    <tr>
+                    <th>Folio</th>
 
-                        <th>Folio</th>
+                    <th>Título</th>
 
-                        <th>Título</th>
+                  
 
-                        <th>Responsable</th>
+                    <th>Estado</th>
 
-                        <th>Prioridad</th>
+                    <th>Fecha</th>
 
-                        <th>Estado</th>
+                    <th>Hora</th>
 
-                        <th>Fecha límite</th>
+                    <th>Acciones</th>
 
-                        <th>Acciones</th>
+                </tr>
 
-                    </tr>
+            </thead>
 
-                </thead>
+            <tbody id="listaPendientes">
 
-                <tbody id="tablaPendientes">
+                <!-- Aquí se cargarán los pendientes -->
 
-                    <tr>
+            </tbody>
 
-                        <td colspan="7" class="text-center text-muted">
+        </table>
 
-                            No hay pendientes registrados.
+    </section>
 
-                        </td>
 
-                    </tr>
 
-                </tbody>
+    <!-- ===================================== -->
+    <!-- KANBAN -->
+    <!-- ===================================== -->
 
-            </table>
+    <section class="kanban">
 
-        </div>
+        <div class="columna-kanban" id="pendientes">
 
-    </div>
-
-    <div class="dashboard-card mt-4">
-
-        <h3>
-
-            <i class="fa-solid fa-table-columns"></i>
-
-            Tablero Kanban
-
-        </h3>
-
-        <hr>
-
-        <div class="kanban">
-
-            <div class="kanban-columna">
-
-                <h5>Pendientes</h5>
-
-                <div id="kanbanPendientes"></div>
-
-            </div>
-
-            <div class="kanban-columna">
-
-                <h5>En proceso</h5>
-
-                <div id="kanbanProceso"></div>
-
-            </div>
-
-            <div class="kanban-columna">
-
-                <h5>Finalizados</h5>
-
-                <div id="kanbanFinalizados"></div>
-
-            </div>
+            <h2>Pendientes</h2>
 
         </div>
 
-    </div>
+        <div class="columna-kanban" id="proceso">
 
-</section>
-                    <!-- PANEL DERECHO -->
+            <h2>En Proceso</h2>
 
-                  <aside id="panelDerecho">
+        </div>
 
-    <div class="dashboard-card">
+        <div class="columna-kanban" id="finalizados">
 
-        <h3>
+            <h2>Finalizados</h2>
+
+        </div>
+
+    </section>
+
+</main>
+
+        <!-- ========================================================= -->
+        <!-- PANEL DERECHO -->
+        <!-- ========================================================= -->
+
+<aside class="panel-derecho">
+
+    <!-- ===================================== -->
+    <!-- RESUMEN GENERAL -->
+    <!-- ===================================== -->
+
+    <section class="card-resumen">
+
+        <h2>
 
             <i class="fa-solid fa-chart-pie"></i>
 
             Resumen General
 
-        </h3>
+        </h2>
 
-        <hr>
+        <div class="item-resumen">
 
-        <div class="resumen-item">
+            <span>Total de Pendientes</span>
 
-            <span>Pendientes</span>
-
-            <strong id="totalPendientes">0</strong>
+            <strong id="resumenPendientes">0</strong>
 
         </div>
 
-        <div class="resumen-item">
+        <div class="item-resumen">
 
-            <span>En proceso</span>
+            <span>En Proceso</span>
 
-            <strong id="totalProceso">0</strong>
+            <strong id="resumenProceso">0</strong>
 
         </div>
 
-        <div class="resumen-item">
+        <div class="item-resumen">
 
             <span>Finalizados</span>
 
-            <strong id="totalFinalizados">0</strong>
+            <strong id="resumenFinalizados">0</strong>
 
         </div>
 
-        <div class="resumen-item">
+        <div class="item-resumen">
 
             <span>Urgentes</span>
 
-            <strong id="totalUrgentes">0</strong>
+            <strong id="resumenUrgentes">0</strong>
 
         </div>
 
-    </div>
+    </section>
 
-    <div class="dashboard-card mt-4">
 
-        <h3>
+
+    <!-- ===================================== -->
+    <!-- ACTIVIDAD RECIENTE -->
+    <!-- ===================================== -->
+
+    <section class="card-actividad">
+
+        <h2>
 
             <i class="fa-solid fa-clock-rotate-left"></i>
 
             Actividad Reciente
 
-        </h3>
+        </h2>
 
-        <hr>
-
-        <div id="actividadReciente">
-
-            <p class="text-muted">
-
-                Sin actividad registrada.
-
-            </p>
-
-        </div>
-
-    </div>
-
-    <div class="dashboard-card mt-4">
-
-        <h3>
-
-            <i class="fa-solid fa-robot"></i>
-
-            Asistente IA
-
-        </h3>
-
-        <hr>
-
-        <div id="panelIA">
+        <div
+            id="actividadReciente"
+            class="lista-actividad">
 
             <p>
-
-                El asistente analizará los pendientes y mostrará recomendaciones.
-
+                No hay movimientos registrados.
             </p>
 
         </div>
 
-    </div>
+    </section>
+
+
+
+    <!-- ===================================== -->
+    <!-- INFORMACIÓN -->
+    <!-- ===================================== -->
+
+    <section class="card-informacion">
+
+        <h2>
+
+            <i class="fa-solid fa-circle-info"></i>
+
+            Información
+
+        </h2>
+
+        <ul>
+
+            <li>✔ Folios automáticos.</li>
+
+            <li>✔ Prioridades por color.</li>
+
+            <li>✔ Fecha y hora opcionales.</li>
+
+            <li>✔ Compatible con supabaseClient.</li>
+
+            <li>✔ Compatible con Dashboard.</li>
+
+            <li>✔ Compatible con Evidencias.</li>
+
+        </ul>
+
+    </section>
 
 </aside>
-                </section>
-
-            </main>
-
-        </div>
 
     </div>
 
-    <!-- ==========================================================
-         JAVASCRIPT
-    ========================================================== -->
 
+    <!-- ========================================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================================= -->
+
+    <!-- CONFIGURACIÓN -->
+<script src="assets/js/config.js"></script>
+
+<!-- LIBRERÍA OFICIAL DE SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="assets/js/config.js"></script>
+<!-- CLIENTE DE SUPABASE -->
 <script src="assets/js/supabase.js"></script>
+<!-- AUTENTICACIÓN -->
 <script src="assets/js/auth.js"></script>
+
+<!-- API DE PENDIENTES -->
+<script src="assets/js/pendientes-api.js"></script>
+
+<!-- FUNCIONES SUPABASE DE PENDIENTES -->
 <script src="assets/js/pendientes-supabase.js"></script>
+
+<!-- MÓDULO PRINCIPAL -->
 <script src="assets/js/pendientes.js"></script>
 
-    <!-- Bootstrap -->
+<script src="assets/js/evidencias.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

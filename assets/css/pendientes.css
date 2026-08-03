@@ -1,86 +1,532 @@
 /* ==========================================================
-   CONTENEDOR PRINCIPAL
+   GESTIÓN OPERATIVA
+   PENDIENTES V3.0
 ========================================================== */
 
-#appPendientes{
+
+/* ==========================================================
+   VARIABLES
+========================================================== */
+
+:root{
+
+    /* Colores */
+
+    --azul:#0F4C81;
+    --azul-hover:#1C6BB5;
+
+    --cian:#00C2FF;
+
+    --morado:#7C3AED;
+
+    --verde:#22C55E;
+
+    --amarillo:#EAB308;
+
+    --naranja:#F97316;
+
+    --rojo:#EF4444;
+
+    --blanco:#FFFFFF;
+
+    --gris:#E5E7EB;
+
+    --texto:#F8FAFC;
+
+    --texto2:#CBD5E1;
+
+
+    /* Fondo */
+
+    --fondo:
+        radial-gradient(circle at top,#163B70 0%,#09152A 45%,#050B15 100%);
+
+
+    /* Glass */
+
+    --glass:
+
+        rgba(255,255,255,.08);
+
+    --glass-border:
+
+        rgba(255,255,255,.10);
+
+    --blur:18px;
+
+
+    /* Bordes */
+
+    --radio:20px;
+
+
+    /* Sombras */
+
+    --shadow:
+
+        0 15px 40px rgba(0,0,0,.35);
+
+
+    /* Transición */
+
+    --speed:.30s ease;
+
+}
+
+
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    background:var(--fondo);
+
+    color:var(--texto);
+
+    overflow-x:hidden;
+
+}
+
+/* ==========================================================
+   LAYOUT GENERAL
+========================================================== */
+
+.contenedor-principal{
 
     width:100%;
 
-    min-height:100vh;
+    max-width:1900px;
 
-}
-
-.contenedor-pendientes{
-
-    display:flex;
+    margin:0 auto;
 
     min-height:100vh;
-
-}
-
-
-/* ==========================================================
-   SIDEBAR
-========================================================== */
-
-.sidebar{
-
-    flex-shrink:0;
-
-}
-
-
-/* ==========================================================
-   CONTENIDO
-========================================================== */
-
-#contenidoPendientes{
-
-    flex:1;
-
-    display:flex;
-
-    flex-direction:column;
-
-    min-width:0;
-
-}
-
-
-/* ==========================================================
-   CUERPO
-========================================================== */
-
-#cuerpoPendientes{
-
-    flex:1;
 
     display:grid;
 
-    grid-template-columns:360px minmax(700px,1fr) 300px;
+    grid-template-columns:
 
-    gap:24px;
+        280px
 
-    padding:24px;
+        minmax(0,1fr)
 
-    align-items:start;
+        280px;
+
+    gap:18px;
+
+    padding:18px;
+
+}
+
+/* ==========================================================
+   PANEL IZQUIERDO
+========================================================== */
+
+.panel-izquierdo{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:var(--radio);
+
+    box-shadow:var(--shadow);
+
+    padding: 18px;
 
 }
 
 
 /* ==========================================================
-   PANELES
+   CENTRO
 ========================================================== */
 
-#panelIzquierdo,
-#panelCentral,
-#panelDerecho{
+.contenido-principal{
 
     display:flex;
 
     flex-direction:column;
 
-    gap:24px;
+    gap:25px;
+
+}
+
+
+/* ==========================================================
+   PANEL DERECHO
+========================================================== */
+
+.panel-derecho{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:var(--radio);
+
+    box-shadow:var(--shadow);
+
+    padding:18px;
+
+}
+
+/* ==========================================================
+   LOGO
+========================================================== */
+
+.logo-panel{
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+}
+
+.logo{
+
+    width:170px;
+
+    display:block;
+
+    margin:auto;
+
+    margin-bottom:20px;
+
+    filter:drop-shadow(0 0 18px rgba(0,194,255,.35));
+
+}
+
+.logo-panel h2{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:white;
+
+    margin-bottom:8px;
+
+}
+
+.logo-panel p{
+
+    color:var(--texto2);
+
+    font-size:15px;
+
+}
+
+
+/* ==========================================================
+   TARJETA USUARIO
+========================================================== */
+
+.card-usuario{
+
+    background:rgba(255,255,255,.05);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:22px;
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+.card-usuario img{
+
+    width:95px;
+
+    height:95px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:3px solid var(--cian);
+
+    margin-bottom:15px;
+
+}
+
+.card-usuario h3{
+
+    font-size:22px;
+
+    color:white;
+
+    margin-bottom:5px;
+
+}
+
+.card-usuario span{
+
+    color:var(--texto2);
+
+}
+
+
+/* ==========================================================
+   FOLIO
+========================================================== */
+
+.folio-container{
+
+    background:linear-gradient(
+        135deg,
+        rgba(0,194,255,.15),
+        rgba(124,58,237,.15)
+    );
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:20px;
+
+    margin-bottom:30px;
+
+}
+
+.folio-container span{
+
+    color:var(--texto2);
+
+    display:block;
+
+    margin-bottom:8px;
+
+}
+
+#folioActual{
+
+    font-size:34px;
+
+    color:white;
+
+    font-weight:700;
+
+}
+
+
+/* ==========================================================
+   TARJETA DEL FORMULARIO
+========================================================== */
+
+.card-formulario{
+
+    background: rgba(15,23,42,.70);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    margin: 25px 0;
+
+    backdrop-filter: blur(12px);
+
+    box-shadow: 0 12px 35px rgba(0,0,0,.25);
+
+}
+
+/* ==========================================================
+   FORMULARIO
+========================================================== */
+
+.card-formulario h2{
+
+    color:white;
+
+    margin-bottom:20px;
+
+}
+
+.card-formulario label{
+
+    display:block;
+
+    margin:15px 0 8px;
+
+    font-weight:600;
+
+}
+
+.card-formulario input,
+
+.card-formulario textarea,
+
+.card-formulario select{
+
+    width:100%;
+
+    background:rgba(255,255,255,.05);
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.10);
+
+    border-radius:14px;
+
+    padding:14px;
+
+    outline:none;
+
+    transition:var(--speed);
+
+    font-family:'Poppins',sans-serif;
+
+}
+
+.card-formulario textarea{
+
+    min-height:140px;
+
+    resize:vertical;
+
+}
+
+.card-formulario input::placeholder,
+
+.card-formulario textarea::placeholder{
+
+    color:#94A3B8;
+
+}
+
+.card-formulario input:focus,
+
+.card-formulario textarea:focus,
+
+.card-formulario select:focus{
+
+    border-color:var(--cian);
+
+    box-shadow:0 0 20px rgba(0,194,255,.25);
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.encabezado{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 22px;
+
+    background:var(--glass);
+
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:22px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:25px;
+
+}
+
+.encabezado h1{
+
+    font-size:38px;
+
+    font-weight:700;
+
+    color:white;
+
+    margin-bottom:8px;
+
+}
+
+.encabezado p{
+
+    color:var(--texto2);
+
+}
+
+.acciones-superiores{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+#usuarioActivo{
+
+    font-weight:600;
+
+    color:var(--cian);
+
+}
+
+#btnModo{
+
+    background:linear-gradient(
+        135deg,
+        var(--azul),
+        var(--morado)
+    );
+
+    color:white;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 20px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:var(--speed);
+
+}
+
+#btnModo:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 0 25px rgba(0,194,255,.35);
 
 }
 
@@ -89,14 +535,300 @@
    TARJETAS
 ========================================================== */
 
-.dashboard-card{
+.estadisticas{
 
-    border-radius:18px;
+    display:grid;
 
-    padding:20px;
+    grid-template-columns:repeat(5,1fr);
+
+    gap:14px;
+margin-bottom:20px;
 
 }
 
+.card-estadistica{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:18px;
+
+    padding:22px;
+
+    transition:var(--speed);
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.card-estadistica:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 0 35px rgba(0,194,255,.18);
+
+}
+
+.card-estadistica::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:4px;
+
+    background:linear-gradient(
+        90deg,
+        var(--cian),
+        var(--morado)
+    );
+
+}
+
+.card-estadistica h3{
+
+    color:var(--texto2);
+
+    font-size:15px;
+
+    margin-bottom:18px;
+
+}
+
+.card-estadistica span{
+
+    font-size:38px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.card-estadistica.urgente::before{
+
+    background:var(--rojo);
+
+}
+
+.card-estadistica.urgente span{
+
+    color:var(--rojo);
+
+}
+
+
+/* ==========================================================
+   PROGRESO
+========================================================== */
+
+.barra-progreso{
+
+    width:100%;
+
+    height:10px;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+    margin:18px 0;
+
+}
+
+.barra{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        var(--cian),
+        var(--morado)
+    );
+
+    transition:.4s;
+
+}
+
+/* ==========================================================
+   TABLA
+========================================================== */
+
+.contenedor-tabla{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:22px;
+
+    padding:25px;
+
+    box-shadow:var(--shadow);
+
+}
+
+
+/* ==========================================================
+   BUSCADOR
+========================================================== */
+
+.barra-tabla{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+
+}
+
+#buscarPendiente{
+
+    width:380px;
+
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    border:1px solid rgba(255,255,255,.10);
+
+    background:rgba(255,255,255,.05);
+
+    color:white;
+
+    outline:none;
+
+    transition:var(--speed);
+
+}
+
+#buscarPendiente::placeholder{
+
+    color:#94A3B8;
+
+}
+
+#buscarPendiente:focus{
+
+    border-color:var(--cian);
+
+    box-shadow:0 0 20px rgba(0,194,255,.25);
+
+}
+
+
+/* ==========================================================
+   TABLA
+========================================================== */
+
+#tablaPendientes{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+#tablaPendientes thead{
+
+    background:rgba(255,255,255,.06);
+
+}
+
+#tablaPendientes th{
+
+    padding:18px;
+
+    text-align:left;
+
+    color:var(--texto2);
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+#tablaPendientes td{
+
+    padding:18px;
+
+    border-top:1px solid rgba(255,255,255,.08);
+
+    color:white;
+
+    transition:var(--speed);
+
+}
+
+#tablaPendientes tbody tr{
+
+    transition:var(--speed);
+
+}
+
+#tablaPendientes tbody tr:hover{
+
+    background:rgba(255,255,255,.05);
+
+}
+
+
+/* ==========================================================
+   PRIORIDADES
+========================================================== */
+
+.prioridad-baja{
+
+    color:var(--verde);
+
+    font-weight:700;
+
+}
+
+.prioridad-media{
+
+    color:var(--amarillo);
+
+    font-weight:700;
+
+}
+
+.prioridad-alta{
+
+    color:var(--naranja);
+
+    font-weight:700;
+
+}
+
+.prioridad-urgente{
+
+    color:var(--rojo);
+
+    font-weight:700;
+
+}
 
 /* ==========================================================
    KANBAN
@@ -108,19 +840,243 @@
 
     grid-template-columns:repeat(3,1fr);
 
-    gap:20px;
+    gap:25px;
+
+    margin-top:30px;
 
 }
 
-.kanban-columna{
 
-    min-height:320px;
+/* ==========================================================
+   COLUMNAS
+========================================================== */
 
-    border:2px dashed rgba(255,255,255,.15);
+.columna-kanban{
 
-    border-radius:12px;
+    background:var(--glass);
 
-    padding:15px;
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:22px;
+
+    min-height:600px;
+
+    padding:20px;
+
+    box-shadow:var(--shadow);
+
+    transition:var(--speed);
+
+}
+
+.columna-kanban:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.columna-kanban h2{
+
+    text-align:center;
+
+    font-size:22px;
+
+    margin-bottom:20px;
+
+    color:white;
+
+}
+
+
+/* ==========================================================
+   BARRAS SUPERIORES
+========================================================== */
+
+#pendientes{
+
+    border-top:5px solid var(--amarillo);
+
+}
+
+#proceso{
+
+    border-top:5px solid var(--cian);
+
+}
+
+#finalizados{
+
+    border-top:5px solid var(--verde);
+
+}
+
+
+/* ==========================================================
+   TARJETA
+========================================================== */
+
+.tarjeta-kanban{
+
+    background:rgba(255,255,255,.06);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+    cursor:grab;
+
+    transition:var(--speed);
+
+}
+
+.tarjeta-kanban:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 0 25px rgba(0,194,255,.18);
+
+}
+
+.tarjeta-kanban h3{
+
+    font-size:18px;
+
+    margin-bottom:10px;
+
+    color:white;
+
+}
+
+.tarjeta-kanban p{
+
+    color:var(--texto2);
+
+    font-size:14px;
+
+    line-height:1.5;
+
+}
+
+
+/* ==========================================================
+   ETIQUETAS
+========================================================== */
+
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:6px 12px;
+
+    border-radius:50px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    margin-top:15px;
+
+}
+
+.badge.baja{
+
+    background:rgba(34,197,94,.20);
+
+    color:var(--verde);
+
+}
+
+.badge.media{
+
+    background:rgba(234,179,8,.20);
+
+    color:var(--amarillo);
+
+}
+
+.badge.alta{
+
+    background:rgba(249,115,22,.20);
+
+    color:var(--naranja);
+
+}
+
+.badge.urgente{
+
+    background:rgba(239,68,68,.20);
+
+    color:var(--rojo);
+
+}
+
+/* ==========================================================
+   PANEL DERECHO
+========================================================== */
+
+.panel-derecho{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+
+/* ==========================================================
+   TARJETAS
+========================================================== */
+
+.card-resumen,
+.card-actividad,
+.card-informacion{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(var(--blur));
+
+    border:1px solid var(--glass-border);
+
+    border-radius:20px;
+
+    padding:22px;
+
+    box-shadow:var(--shadow);
+
+}
+
+
+/* ==========================================================
+   TÍTULOS
+========================================================== */
+
+.card-resumen h2,
+.card-actividad h2,
+.card-informacion h2{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:22px;
+
+    margin-bottom:22px;
+
+    color:white;
 
 }
 
@@ -129,7 +1085,7 @@
    RESUMEN
 ========================================================== */
 
-.resumen-item{
+.item-resumen{
 
     display:flex;
 
@@ -137,101 +1093,239 @@
 
     align-items:center;
 
-    padding:12px 0;
+    padding:14px 0;
 
     border-bottom:1px solid rgba(255,255,255,.08);
 
 }
 
+.item-resumen:last-child{
+
+    border-bottom:none;
+
+}
+
+.item-resumen span{
+
+    color:var(--texto2);
+
+}
+
+.item-resumen strong{
+
+    font-size:22px;
+
+    color:var(--cian);
+
+}
+
+
 /* ==========================================================
-   AJUSTE PARA EL SIDEBAR FIJO
+   ACTIVIDAD
 ========================================================== */
 
-#contenidoPendientes{
+.lista-actividad{
 
-    margin-left:260px;
+    display:flex;
 
-    width:calc(100% - 260px);
+    flex-direction:column;
+
+    gap:15px;
+
+    max-height:350px;
+
+    overflow-y:auto;
 
 }
 
-.sidebar{
+.lista-actividad p{
 
-    z-index:1000;
+    color:var(--texto2);
+
+    line-height:1.6;
+
+}
+
+
+/* ==========================================================
+   INFORMACIÓN
+========================================================== */
+
+.card-informacion ul{
+
+    list-style:none;
+
+}
+
+.card-informacion li{
+
+    padding:10px 0;
+
+    color:var(--texto2);
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+
+}
+
+.card-informacion li:last-child{
+
+    border-bottom:none;
 
 }
 
 /* ==========================================================
-   TARJETA DEL USUARIO
+   SCROLLBAR
 ========================================================== */
 
-.sidebar-user-card{
+::-webkit-scrollbar{
 
-    margin:20px;
-
-    padding:20px;
-
-    text-align:center;
-
-    border-radius:18px;
-
-    background:rgba(255,255,255,.05);
-
-    border:1px solid rgba(255,255,255,.08);
+    width:10px;
 
 }
 
-.sidebar-user-photo{
+::-webkit-scrollbar-track{
 
-    width:90px;
-
-    height:90px;
-
-    border-radius:50%;
-
-    object-fit:cover;
-
-    border:4px solid #00c896;
-
-    margin-bottom:15px;
+    background:#07121F;
 
 }
 
-.sidebar-user-card h3{
+::-webkit-scrollbar-thumb{
 
-    color:white;
+    background:linear-gradient(
+        180deg,
+        var(--cian),
+        var(--morado)
+    );
 
-    font-size:18px;
-
-    margin:0;
+    border-radius:50px;
 
 }
 
 
-.estado-sidebar{
+/* ==========================================================
+   MODO CLARO
+========================================================== */
 
-    display:inline-flex;
+body.claro{
 
-    align-items:center;
+    --fondo:#F4F7FB;
 
-    gap:8px;
+    --glass:#FFFFFF;
 
-    padding:8px 14px;
+    --glass-border:#D6DCE5;
 
-    border-radius:999px;
+    --texto:#1E293B;
 
-    background:rgba(0,200,150,.15);
+    --texto2:#64748B;
 
-    color:#00d084;
-
-    font-size:13px;
-
-    font-weight:bold;
+    --shadow:
+        0 10px 30px rgba(0,0,0,.08);
 
 }
 
-.estado-sidebar i{
 
-    font-size:10px;
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:1600px){
+
+    .contenedor-principal{
+
+        grid-template-columns:
+
+            340px
+
+            1fr
+
+            300px;
+
+    }
+
+}
+
+
+@media(max-width:1300px){
+
+    .contenedor-principal{
+
+        grid-template-columns:
+
+            320px
+
+            1fr;
+
+    }
+
+    .panel-derecho{
+
+        grid-column:1 / -1;
+
+    }
+
+}
+
+
+@media(max-width:1000px){
+
+    .contenedor-principal{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .panel-izquierdo,
+    .panel-derecho{
+
+        position:static;
+
+    }
+
+    .estadisticas{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .kanban{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .encabezado{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+    .acciones-superiores{
+
+        width:100%;
+
+        justify-content:space-between;
+
+    }
+
+    .estadisticas{
+
+        grid-template-columns:1fr;
+
+    }
+
+    #buscarPendiente{
+
+        width:100%;
+
+    }
 
 }
