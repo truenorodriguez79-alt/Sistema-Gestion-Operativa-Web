@@ -347,9 +347,25 @@ function mostrarDashboard(usuario) {
 
     if (foto) {
 
-        foto.src =
-            usuario.foto ||
-            "assets/img/usuarios/default.png";
+      let fotoUsuario = "assets/img/usuarios/default.png";
+
+switch ((usuario.usuario || "").toLowerCase()) {
+
+    case "elizabeth":
+        fotoUsuario = "assets/img/fondo/elizabeth.png";
+        break;
+
+    case "jasso":
+        fotoUsuario = "assets/img/fondo/apartado Jasso.jpg";
+        break;
+
+    case "enrique":
+        fotoUsuario = "assets/img/fondo/apartado Enrique.jpg";
+        break;
+
+}
+
+foto.src = fotoUsuario;
 
         foto.alt =
             usuario.nombre;

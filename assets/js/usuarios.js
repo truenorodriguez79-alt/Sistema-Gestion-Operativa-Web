@@ -61,9 +61,27 @@ async function cargarUsuariosActivos() {
             tarjeta.className =
                 "usuario-activo-card";
 
+let foto = "assets/img/usuarios/default.png";
+
+switch ((usuario.usuario || "").toLowerCase()) {
+
+    case "elizabeth":
+        foto = "assets/img/fondo/elizabeth.png";
+        break;
+
+    case "jasso":
+        foto = "assets/img/fondo/apartado Jasso.jpg";
+        break;
+
+    case "enrique":
+        foto = "assets/img/fondo/apartado Enrique.jpg";
+        break;
+
+}
+
             tarjeta.innerHTML = `
                 <img
-                    src="${usuario.foto || "assets/img/usuarios/default.png"}"
+src="${foto}"
                     class="usuario-avatar"
                     alt="${usuario.nombre}">
 

@@ -9,6 +9,14 @@
 
 document.addEventListener("DOMContentLoaded", iniciarDashboard);
 
+/* ==========================================================
+   VARIABLES GLOBALES
+========================================================== */
+
+let pendientesDashboard = [];
+
+let canalDashboard = null;
+
 async function iniciarDashboard() {
 
     console.clear();
@@ -18,7 +26,9 @@ async function iniciarDashboard() {
     console.log(" Dashboard iniciado");
     console.log("======================================");
 
-    await cargarResumenDashboard();
+   await cargarResumenDashboard();
+
+activarRealtimeDashboard();
 
 }
 
@@ -67,13 +77,10 @@ async function cargarResumenDashboard() {
            PENDIENTES
         ========================================== */
 
-        const {
-
-            data: pendientes = [],
-
-            error: errorPendientes
-
-        } = await supabaseClient
+   const {
+    data,
+    error: errorPendientes
+} = await supabaseClient
 
             .from("pendientes")
 
@@ -81,27 +88,29 @@ async function cargarResumenDashboard() {
 
         if (errorPendientes) throw errorPendientes;
 
+        pendientesDashboard = data || [];
+
         /* ==========================================
            ESTADÍSTICAS
         ========================================== */
 
-        const total = pendientes.filter(
+      const total = pendientesDashboard.filter(
 
-            p => p.estado !== "Finalizado"
+    p => p.estado !== "Finalizado"
 
-        ).length;
+).length;
 
-        const finalizados = pendientes.filter(
+const finalizados = pendientesDashboard.filter(
 
-            p => p.estado === "Finalizado"
+    p => p.estado === "Finalizado"
 
-        ).length;
+).length;
 
-        const urgentes = pendientes.filter(
+const urgentes = pendientesDashboard.filter(
 
-            p => p.prioridad === "Urgente"
+    p => p.prioridad === "Urgente"
 
-        ).length;
+).length;
 
 /* ==========================================
    ELEMENTOS DEL DASHBOARD
@@ -153,8 +162,15 @@ const usuariosConectados =
    ACTUALIZAR INDICADORES
 ========================================== */
 
+const heroPendientesHero =
+    document.getElementById("heroPendientesHero");
+
 if (heroPendientes) {
     heroPendientes.textContent = total;
+}
+
+if (heroPendientesHero) {
+    heroPendientesHero.textContent = total;
 }
 
 if (heroUrgentes) {
@@ -234,8 +250,11 @@ if (heroUsuario) {
    TABLERO
 ========================================== */
 
-await actualizarTableroEstados();
+if (typeof actualizarTableroEstados === "function") {
 
+    await actualizarTableroEstados();
+
+}
 
  } catch (error) {
 
@@ -252,71 +271,119 @@ await actualizarTableroEstados();
    TABLERO DE ESTADOS
 ========================================================== */
 
-console.log("Actualizando tablero de estados...");
+async function actualizarTableroEstados() {
 
-/* ==========================================
-   COLUMNAS
-========================================== */
+    console.log("Actualizando tablero de estados...");
 
 const columnaPendientes =
-    document.getElementById("tableroPendientes");
+    document.getElementById("estadoPendiente");
 
 const columnaProceso =
-    document.getElementById("tableroProceso");
+    document.getElementById("estadoProceso");
 
 const columnaFinalizados =
-    document.getElementById("tableroFinalizados");
+    document.getElementById("estadoFinalizado");
 
-if (!columnaPendientes ||
-    !columnaProceso ||
-    !columnaFinalizados) {
+    if (
+        !columnaPendientes ||
+        !columnaProceso ||
+        !columnaFinalizados
+    ) {
 
-    console.warn("No se encontraron las columnas del tablero.");
+        console.warn("No se encontraron las columnas del tablero.");
 
-    return;
+        return;
+
+    }
+
+    columnaPendientes.innerHTML = "";
+
+    columnaProceso.innerHTML = "";
+
+    columnaFinalizados.innerHTML = "";
+
+    pendientesDashboard.forEach(pendiente => {
+
+    const tarjeta = document.createElement("div");
+
+    tarjeta.className = "tarjeta-tablero";
+
+    tarjeta.innerHTML = `
+
+        <strong>#${pendiente.folio}</strong>
+
+        <h4>${pendiente.titulo}</h4>
+
+        <small>${pendiente.prioridad}</small>
+
+    `;
+
+    switch (pendiente.estado) {
+
+        case "Pendiente":
+
+            columnaPendientes.appendChild(tarjeta);
+
+            break;
+
+        case "En Proceso":
+
+            columnaProceso.appendChild(tarjeta);
+
+            break;
+
+        case "Finalizado":
+
+            columnaFinalizados.appendChild(tarjeta);
+
+            break;
+
+    }
+
+});
 
 }
 
-/* ==========================================
-   LIMPIAR COLUMNAS
-========================================== */
-
-columnaPendientes.innerHTML = "";
-
-columnaProceso.innerHTML = "";
-
-columnaFinalizados.innerHTML = "";
-
-
-
 /* ==========================================================
-   ACTUALIZAR HERO EN TIEMPO REAL
+   REALTIME
 ========================================================== */
 
-supabaseClient
+function activarRealtimeDashboard() {
 
-    .channel("dashboard-resumen")
+    if (canalDashboard) {
 
-    .on(
+        supabaseClient.removeChannel(canalDashboard);
 
-        "postgres_changes",
+    }
 
-        {
+    canalDashboard = supabaseClient
 
-            event: "*",
+        .channel("dashboard-resumen")
 
-            schema: "public",
+        .on(
 
-            table: "pendientes"
+            "postgres_changes",
 
-        },
+            {
 
-        () => {
+                event: "*",
 
-            cargarResumenDashboard();
+                schema: "public",
 
-        }
+                table: "pendientes"
 
-    )
+            },
 
-    .subscribe();
+            () => {
+
+                console.log("🔄 Dashboard actualizado");
+
+                cargarResumenDashboard();
+
+            }
+
+        )
+
+        .subscribe();
+
+}

@@ -682,12 +682,9 @@ body{
 
 .estado-col h3{
 
-
-    color:white;
-
+    color: var(--color-texto);
 
     font-size:16px;
-
 
 }
 
@@ -1673,5 +1670,65 @@ body{
         align-items:flex-start;
 
     }
+
+}
+
+/* ==========================================================
+   TABLERO DE ESTADOS - MODO CLARO
+========================================================== */
+
+body.modo-claro .estado-col{
+
+    background: #ffffff;
+
+    border: 1px solid #d9d9d9;
+
+}
+
+body.modo-claro .estado-col h3{
+
+    color: #111111 !important;
+
+}
+
+body.modo-claro .estado-col .estado-card{
+
+    color: #111111 !important;
+
+}
+
+body.modo-claro .estado-col span{
+
+    color: #111111 !important;
+
+}
+
+body.modo-claro .estado-col p{
+
+    color: #111111 !important;
+
+}
+
+/* ==========================================================
+   TEMA CLARO
+========================================================== */
+
+body{
+
+    --color-texto: #111111;
+
+    --color-panel: #ffffff;
+
+}
+
+/* ==========================================================
+   TEMA OSCURO
+========================================================== */
+
+body.tema-oscuro{
+
+    --color-texto: #ffffff;
+
+    --color-panel: #1b1b1b;
 
 }

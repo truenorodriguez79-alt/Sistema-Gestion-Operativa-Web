@@ -40,7 +40,7 @@ const RESPONSABLES = [
         nombre: "Ing. Luis Enrique Arredondo Facio",
         area: "Gestión Operativa",
         clase: "tema-enrique",
-        imagen: "assets/img/fondo/apartado Enrique .jpg"
+        imagen: "assets/img/fondo/apartado Enrique.jpg"
     }
 
 ];
@@ -65,8 +65,13 @@ crearPanelPendientes();
 
 crearPizarronPendientes();
 
-await cargarResumenDashboard();
+actualizarResumenGeneral();
 
+actualizarTableroEstados();
+
+actualizarUsuariosActivos();
+
+actualizarBitacora();
 }
 
 /* ==========================================================
@@ -135,6 +140,9 @@ function crearPanelPendientes() {
 
         tarjeta.className =
             "tarjeta-pendiente";
+
+console.log(usuario.nombre);
+console.log(usuario.imagen);
 
         tarjeta.innerHTML = `
 

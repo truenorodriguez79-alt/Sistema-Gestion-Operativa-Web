@@ -1462,3 +1462,65 @@ body.claro{
     padding:12px;
 
 }
+
+/* ==========================================================
+   BOTÓN REGRESAR
+========================================================== */
+
+.btn-regresar{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all .30s ease;
+}
+
+/* MODO CLARO */
+/* MODO OSCURO (por defecto) */
+.btn-regresar{
+    background:#00c853;
+    color:#fff;
+    border:2px solid #00e676;
+    box-shadow:0 0 18px rgba(0,230,118,.45);
+}
+
+.btn-regresar:hover{
+    background:#00e676;
+    color:#071b11;
+    transform:translateY(-2px);
+    box-shadow:0 0 28px rgba(0,230,118,.75);
+}
+
+/* MODO CLARO */
+body.claro .btn-regresar{
+    background:#0d6efd;
+    border:2px solid #0d6efd;
+    color:#fff;
+    box-shadow:none;
+}
+
+body.modo-oscuro .btn-regresar:hover{
+    background: #00e676;
+    color: #071b11;
+    transform: translateY(-2px);
+    box-shadow: 0 0 28px rgba(0,230,118,.75);
+}
+
+.folio-kanban{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.texto-folio{
+    font-weight:700;
+    color:inherit;
+}
+
+.numero-folio{
+    color:#000;
+    font-weight:800;
+}
