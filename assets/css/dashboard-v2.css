@@ -831,3 +831,11 @@ textarea{
     font-weight:600;
 
 }
+
+.dashboard-card-usuarios{
+
+    width:100%;
+
+    grid-column:1 / -1;
+
+}

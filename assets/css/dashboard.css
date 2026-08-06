@@ -828,23 +828,15 @@ body:not(.tema-oscuro) .indicador-card p{
    DOBLE PANEL
 ================================================== */
 
-
 .dashboard-doble{
-
 
     display:grid;
 
-
-    grid-template-columns:
-
-    1fr 1fr;
-
+    grid-template-columns:1fr;
 
     gap:20px;
 
-
 }
-
 
 
 /* ==================================================
@@ -1380,17 +1372,30 @@ body:not(.tema-oscuro) .hero-progress-fill{
 /* ==========================================================
    USUARIOS ACTIVOS
 ========================================================== */
+#listaUsuariosActivos{
 
-.usuario-activo-card{
     display:flex;
-    align-items:center;
-    gap:16px;
-    padding:15px;
-    margin-bottom:15px;
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:16px;
+
+    gap:15px;
+
+    justify-content:space-between;
+
+    align-items:stretch;
+
 }
+
+#listaUsuariosActivos{
+
+    display:flex;
+
+    gap:15px;
+
+    justify-content:space-between;
+
+    align-items:stretch;
+
+}
+
 
 .usuario-avatar{
 
@@ -1464,9 +1469,9 @@ body:not(.tema-oscuro) .usuario-datos small{
 ========================================================== */
 
 .usuarios-pendientes{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
 }
 
 
@@ -1475,9 +1480,12 @@ body:not(.tema-oscuro) .usuario-datos small{
 ====================================================== */
 
 .usuarios-pendientes{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:20px;
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+    align-items:flex-start;
+    gap:12px;
+    flex-wrap:nowrap;
 }
 
 .tarjeta-pendiente{
@@ -1496,7 +1504,7 @@ body:not(.tema-oscuro) .usuario-datos small{
 
     transition:.30s;
 
-    min-height:540px;
+    min-height:auto;
 
 }
 
@@ -1895,6 +1903,12 @@ body:not(.tema-oscuro) .sin-pendientes{
         width:100%;
     }
 
+#listaUsuariosActivos{
+
+    flex-direction:column;
+
+}
+    
     .usuario-activo-card{
         flex-direction:column;
         text-align:center;
@@ -3091,5 +3105,19 @@ body:not(.tema-oscuro) .hero-resumen strong{
         justify-content:center;
 
     }
+
+}
+
+.descripcion-pizarron{
+
+    margin-top:6px;
+
+    font-size:.82rem;
+
+    color:#d7dce5;
+
+    line-height:1.35;
+
+    opacity:.9;
 
 }

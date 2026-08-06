@@ -13,6 +13,8 @@ console.log("✅ paneles.js cargado");
 
 let pendientes = [];
 
+let canalBitacora = null;
+
 /* ==========================================================
    RESPONSABLES
 ========================================================== */
@@ -65,13 +67,13 @@ crearPanelPendientes();
 
 crearPizarronPendientes();
 
-actualizarResumenGeneral();
+// actualizarResumenGeneral();
+// actualizarTableroEstados();
+// actualizarUsuariosActivos();
+// actualizarBitacora();
 
-actualizarTableroEstados();
+    activarRealtime();
 
-actualizarUsuariosActivos();
-
-actualizarBitacora();
 }
 
 /* ==========================================================
@@ -353,15 +355,31 @@ function crearColumnaPizarron(usuario, listaPendientes) {
 
 listaPendientes.forEach(pendiente => {
 
+console.log(pendiente);
+
     const tarjeta = document.createElement("div");
 
     tarjeta.className = "item-pizarron";
 
     tarjeta.innerHTML = `
 
-        <div class="titulo-pizarron">
+       <div class="titulo-pizarron">
 
-            <strong>${pendiente.titulo || "Sin título"}</strong>
+    <strong>
+        ${pendiente.titulo || "Sin título"}
+    </strong>
+
+    ${
+        pendiente.descripcion
+            ? `
+                <div class="descripcion-pizarron">
+                    ${pendiente.descripcion}
+                </div>
+              `
+            : ""
+    }
+
+</div>
 
         </div>
 
@@ -376,6 +394,16 @@ listaPendientes.forEach(pendiente => {
         </div>
 
         <div class="acciones-pizarron">
+
+<button
+        class="btn-dashboard btn-proceso"
+        onclick="cambiarEstadoPendiente('${pendiente.id}','En Proceso')">
+
+        <i class="fa-solid fa-spinner"></i>
+
+        En Proceso
+
+    </button>
 
             <button
                 class="btn-dashboard btn-finalizar"
@@ -403,6 +431,8 @@ listaPendientes.forEach(pendiente => {
    ACTUALIZAR PANELES
 ========================================================== */
 
+console.log("Entró a actualizarPaneles");
+
 async function actualizarPaneles() {
 
     console.log("🔄 Actualizando paneles...");
@@ -412,6 +442,29 @@ async function actualizarPaneles() {
     crearPanelPendientes();
 
     crearPizarronPendientes();
+
+}
+
+async function cambiarEstadoPendiente(id, estado) {
+
+    const { error } = await supabaseClient
+        .from("pendientes")
+        .update({
+
+            estado: estado,
+            kanban: estado
+
+        })
+        .eq("id", id);
+
+    if (error) {
+
+        console.error(error);
+        return;
+
+    }
+
+    await actualizarPaneles();
 
 }
 
@@ -431,19 +484,13 @@ async function finalizarPendiente(id) {
 
     const { error } = await supabaseClient
 
-        .from("pendientes")
 
-        .update({
 
-            estado: "Finalizado",
+    .from("pendientes")
 
-            kanban: "Finalizado",
+    .delete()
 
-            fecha_finalizacion: new Date().toISOString()
-
-        })
-
-        .eq("id", id);
+    .eq("id", id);
 
     if (error) {
 
@@ -455,20 +502,6 @@ async function finalizarPendiente(id) {
 
     }
 
-    // Registrar movimiento en la bitácora
-    await registrarMovimiento({
-
-        usuario: sessionStorage.getItem("usuarioSesionActual"),
-
-        accion: "Finalizar",
-
-        folio: pendiente?.folio || null,
-
-        descripcion: `Finalizó el pendiente "${pendiente?.titulo || "Sin título"}"`,
-
-        icono: "fa-circle-check"
-
-    });
 
     await actualizarPaneles();
 
@@ -480,9 +513,15 @@ async function finalizarPendiente(id) {
 
 function activarRealtime() {
 
-    supabaseClient
+    if (canalBitacora) {
 
-        .channel("paneles-dashboard")
+        supabaseClient.removeChannel(canalBitacora);
+
+    }
+
+    canalBitacora = supabaseClient
+
+        .channel("bitacora-dashboard")
 
         .on(
 
@@ -494,28 +533,23 @@ function activarRealtime() {
 
                 schema: "public",
 
-                table: "pendientes"
+                table: "bitacora"
 
             },
 
             async () => {
 
-                console.log("📡 Cambio detectado en pendientes.");
+                console.log("📡 Bitácora actualizada");
 
-                await actualizarPaneles();
+                await cargarBitacora();
 
             }
 
         )
 
-        .subscribe((estado) => {
-
-            console.log("Realtime:", estado);
-
-        });
+        .subscribe();
 
 }
-
 /* ==========================================================
    FUNCIONES PÚBLICAS
 ========================================================== */
@@ -525,6 +559,8 @@ window.actualizarPaneles = actualizarPaneles;
 window.abrirApartado = abrirApartado;
 
 window.finalizarPendiente = finalizarPendiente;
+
+window.cambiarEstadoPendiente = cambiarEstadoPendiente;
 /* ==========================================================
    VERIFICACIÓN FINAL
 ========================================================== */

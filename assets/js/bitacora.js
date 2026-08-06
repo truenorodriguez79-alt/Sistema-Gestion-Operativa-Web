@@ -29,7 +29,9 @@ async function iniciarBitacora() {
 
     await cargarBitacora();
 
-    activarRealtime();
+   await activarRealtimeBitacora();
+
+
 
 }
 
@@ -230,39 +232,45 @@ async function limpiarBitacora() {
 /* ==========================================================
    REALTIME
 ========================================================== */
+let canalBitacora = null;
 
-function activarRealtime() {
+async function activarRealtimeBitacora() {
 
-    supabaseClient
+    if (canalBitacora) {
+
+        await supabaseClient.removeChannel(canalBitacora);
+
+        canalBitacora = null;
+
+    }
+
+    canalBitacora = supabaseClient
 
         .channel("bitacora-dashboard")
 
         .on(
-
             "postgres_changes",
-
             {
-
                 event: "*",
-
                 schema: "public",
-
                 table: "bitacora"
-
             },
-
             async () => {
+
+                console.log("📡 Cambio en bitácora");
 
                 await cargarBitacora();
 
             }
-
         )
 
-        .subscribe();
+        .subscribe((estado) => {
+
+            console.log("Realtime Bitácora:", estado);
+
+        });
 
 }
-
 /* ==========================================================
    FUNCIONES PÚBLICAS
 ========================================================== */

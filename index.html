@@ -87,7 +87,6 @@
 <script defer src="assets/js/evidencias.js"></script>
 <!-- <script defer src="assets/js/pendientes.js"></script> -->
 <script defer src="assets/js/paneles.js"></script>
-<script defer src="assets/js/bitacora.js"></script>
 <script defer src="assets/js/navegacion.js"></script>
 <script defer src="assets/js/main.js"></script>
 
@@ -338,13 +337,7 @@
 
         </a>
 
-        <a href="#" id="menuBitacora">
-
-            <i class="fa-solid fa-book"></i>
-
-            <span>Bitácora</span>
-
-        </a>
+     
 
  <button
         id="btnCerrarSesion"
@@ -584,6 +577,7 @@ class="contenido-dashboard">
 
 <section id="evidencias" class="modulo">
 
+    
     <div class="dashboard-card">
 
         <div class="section-title">
@@ -662,136 +656,28 @@ class="contenido-dashboard">
 
 <section id="bitacora" class="modulo">
 
-<!-- ================================================= -->
-<!-- ACTIVIDAD -->
-<!-- ================================================= -->
+    <div class="dashboard-doble">
 
+      <div class="dashboard-card dashboard-card-usuarios">
+        
+            <h2>
 
-<div class="dashboard-doble">
+                <i class="fa-solid fa-user-group"></i>
 
+                Usuarios activos
 
-<div class="dashboard-card">
+            </h2>
 
-<h2>
-<i class="fa-solid fa-book"></i>
-Bitácora en vivo
-</h2>
-
-
-<div id="listaBitacora">
-
-Sin movimientos recientes
-
-</div>
-
-
-</div>
-
-
-
-<div class="dashboard-card">
-
-
-<h2>
-
-<i class="fa-solid fa-user-group"></i>
-
-Usuarios activos
-
-</h2>
-
-
-<div id="listaUsuariosActivos">
-
-    <div class="usuario-activo-card">
-
-        <img
-            src="assets/img/team/Elizabeth.jpg"
-            class="usuario-avatar"
-            alt="Usuario">
-
-        <div class="usuario-datos">
-
-            <h4>Elizabeth</h4>
-
-            <span class="estado desconectado">
-                <i class="fa-solid fa-circle"></i>
-                Desconectado
-            </span>
-
-            <small>
-                <i class="fa-solid fa-thumbtack"></i>
-                0 pendiente(s) activos
-            </small>
+            <div id="listaUsuariosActivos"></div>
 
         </div>
 
     </div>
-
-    <div class="usuario-activo-card">
-
-        <img
-           src="assets/img/team/Jasso.jpg"
-            class="usuario-avatar"
-            alt="Usuario">
-
-        <div class="usuario-datos">
-
-            <h4>Jasso</h4>
-
-            <span class="estado desconectado">
-                <i class="fa-solid fa-circle"></i>
-                Desconectado
-            </span>
-
-            <small>
-                <i class="fa-solid fa-thumbtack"></i>
-                0 pendiente(s) activos
-            </small>
-
-        </div>
-
-    </div>
-
-    <div class="usuario-activo-card">
-
-        <img
-           src="assets/img/team/Enrique.jpg"
-            class="usuario-avatar"
-            alt="Usuario">
-
-        <div class="usuario-datos">
-
-            <h4>Enrique</h4>
-
-            <span class="estado desconectado">
-                <i class="fa-solid fa-circle"></i>
-                Desconectado
-            </span>
-
-            <small>
-                <i class="fa-solid fa-thumbtack"></i>
-                0 pendiente(s) activos
-            </small>
-
-        </div>
-
-    </div>
-
-</div>
-
-</div>
-
-
-</div>
-
-
-
-
 
 </section>
 
 <section id="tablero" class="modulo">
+
 
 <!-- ================================================= -->
 <!-- TABLERO ESTADOS -->
